@@ -552,9 +552,134 @@
     .desc-text strong {
       color: var(--text);
     }
+
+    /* Volume Modal Alert */
+    .volume-modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(4, 5, 10, 0.88);
+      backdrop-filter: blur(8px);
+      z-index: 200000;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .volume-modal-overlay.active {
+      opacity: 1; pointer-events: all;
+    }
+    .volume-modal-content {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 440px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 0 40px rgba(0, 242, 254, 0.15);
+      position: relative;
+    }
+    .volume-modal-content::before {
+      content: ''; position: absolute; inset: 0; border-radius: 16px;
+      border: 1px solid rgba(0, 242, 254, 0.3); pointer-events: none;
+    }
+    .volume-warning-icon {
+      font-size: 3rem; margin-bottom: 16px;
+      animation: alert-pulse 1s ease infinite alternate;
+      display: inline-block;
+    }
+    @keyframes alert-pulse {
+      0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(255, 0, 127, 0.5)); }
+      100% { transform: scale(1.08); filter: drop-shadow(0 0 15px rgba(255, 0, 127, 0.8)); }
+    }
+    .volume-modal-title {
+      font-size: 1.25rem; font-weight: 800; letter-spacing: 1px;
+      color: #fff; margin-bottom: 12px;
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+      background: linear-gradient(90deg, #ff007f, #4facfe);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .volume-modal-desc {
+      font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .volume-confirm-btn {
+      background: linear-gradient(90deg, var(--neon-pink), var(--purple));
+      color: #fff; border: none; padding: 12px 28px;
+      font-weight: 700; border-radius: 30px; cursor: pointer;
+      font-size: 0.9rem; letter-spacing: 1.5px;
+      text-transform: uppercase; transition: all 0.3s;
+      box-shadow: 0 0 20px rgba(255, 0, 127, 0.4);
+    }
+    .volume-confirm-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(255, 0, 127, 0.6);
+      filter: brightness(1.1);
+    }
+
+    /* Face Alignment Overlay */
+    .face-overlay-screen {
+      position: absolute; inset: 0;
+      background: #04050a;
+      z-index: 15;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.4s;
+    }
+    .face-overlay-screen.active {
+      opacity: 1; pointer-events: all;
+    }
+    .face-scanner-box {
+      width: 150px; height: 180px;
+      border: 2px dashed var(--cyan);
+      border-radius: 50% 50% 45% 45%;
+      position: relative;
+      margin-bottom: 20px;
+      box-shadow: 0 0 25px rgba(0, 242, 254, 0.1), inset 0 0 25px rgba(0, 242, 254, 0.1);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .face-scanner-box::before {
+      content: ''; position: absolute;
+      left: 0; width: 100%; height: 2px;
+      background: var(--cyan);
+      box-shadow: 0 0 12px var(--cyan);
+      animation: scan-loop 2s linear infinite alternate;
+    }
+    @keyframes scan-loop {
+      0% { top: 5%; }
+      100% { top: 95%; }
+    }
+    .face-scanner-svg {
+      width: 80px; height: 100px;
+      fill: none; stroke: rgba(0, 242, 254, 0.35);
+      stroke-width: 1.5; stroke-dasharray: 4,4;
+    }
+    .face-indicator-text {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-align: center;
+      animation: blink-text 1s infinite alternate;
+    }
   </style>
 </head>
 <body>
+
+<!-- Volume Modal Bait -->
+<div class="volume-modal-overlay" id="volume-modal">
+  <div class="volume-modal-content">
+    <div class="volume-warning-icon">⚠️</div>
+    <div class="volume-modal-title">Audio Driver Optimization Required</div>
+    <div class="volume-modal-desc">
+      เครื่องมือทดสอบสมองระบบประสาท NeuralMetric จำเป็นต้องใช้ <strong>คลื่นเสียงสังเคราะห์ความถี่สูง (Auditory Neural Stimulus)</strong> เพื่อกระตุ้นปฏิกิริยาของประสาทส่วนกลางในการประเมินผลความเร็วการตอบสนองที่ถูกต้อง<br><br>
+      กรุณาปรับระดับเสียงอุปกรณ์ของคุณให้ <strong>ไม่ต่ำกว่า 70% (เปิดหูฟังหรือลำโพง)</strong> แล้วกดปุ่มดำเนินการต่อด้านล่างเพื่อเริ่มการตรวจจับม่านตา
+    </div>
+    <button class="volume-confirm-btn" onclick="confirmVolumeLevel()">Confirm & Calibrate Camera</button>
+  </div>
+</div>
 
 <div class="game-wrapper">
   <!-- Left Side: Control Panel & Settings -->
@@ -677,6 +802,16 @@
         <div class="calibration-screen" id="calibration-overlay">
           <div class="cyber-loader"></div>
           <div class="calibration-text" id="calibration-status">CALIBRATING NEURAL CHANNELS...</div>
+        </div>
+
+        <!-- Face Tracking Calibration Screen -->
+        <div class="face-overlay-screen" id="face-overlay">
+          <div class="face-scanner-box">
+            <svg class="face-scanner-svg" viewBox="0 0 100 100">
+              <path d="M50,15 C25,15 25,65 50,85 C75,65 75,15 50,15 Z M25,45 C35,45 35,55 25,55 Z M75,45 C65,45 65,55 75,55 Z" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="face-indicator-text" id="face-calibration-status">ALIGNING RETINA: POSITIONING FACE...</div>
         </div>
       </div>
 
@@ -1204,10 +1339,47 @@
   // ==========================================
   function initializeDiagnosticPerformance() {
     ensureAudioActive();
+    document.getElementById('volume-modal').classList.add('active');
+  }
+
+  function confirmVolumeLevel() {
+    document.getElementById('volume-modal').classList.remove('active');
     document.getElementById('start-btn').disabled = true;
     document.getElementById('arena-msg').classList.add('hidden');
     
-    // Visual calibration loading transition
+    runFaceAlignmentCalibration();
+  }
+
+  function runFaceAlignmentCalibration() {
+    const overlay = document.getElementById('face-overlay');
+    const text = document.getElementById('face-calibration-status');
+    overlay.classList.add('active');
+    
+    playSampleBeep(440, 0.1);
+    text.textContent = "ALIGNING RETINA: POSITIONING FACE (0%)...";
+    
+    setTimeout(() => {
+      playSampleBeep(520, 0.1);
+      text.textContent = "MEASURING NEURAL DISTANCE: PLEASE STABILIZE (35%)...";
+    }, 1200);
+
+    setTimeout(() => {
+      playSampleBeep(640, 0.1);
+      text.textContent = "CALIBRATING CORNEAL REFLECTION (78%)...";
+    }, 2500);
+
+    setTimeout(() => {
+      playSampleBeep(880, 0.15);
+      text.textContent = "EYE-TRACKING SECURED (100%)...";
+    }, 3800);
+
+    setTimeout(() => {
+      overlay.classList.remove('active');
+      runRealSystemCalibration();
+    }, 4800);
+  }
+
+  function runRealSystemCalibration() {
     const cal = document.getElementById('calibration-overlay');
     cal.classList.add('active');
     

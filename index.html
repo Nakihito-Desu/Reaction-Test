@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🧠 Reaction Speed Test – v2.4</title>
+  <title>🧠 Reaction Speed Test – v2.5 (Upgraded)</title>
   <meta name="description" content="ทดสอบความเร็วในการตอบสนองของคุณ! แบบทดสอบทางจิตวิทยาที่แม่นยำ วัดค่า Reaction Time เฉลี่ยและ Accuracy" />
 
   <!-- Open Graph / Facebook / LINE preview -->
@@ -36,6 +36,7 @@
       --red: #f87171;
       --text: #e8ecf4;
       --muted: #6b7a99;
+      --gold: #fbbf24;
     }
 
     body {
@@ -90,27 +91,28 @@
       margin-bottom: 16px;
     }
 
-    /* ─── Stats row ─── */
+    /* ─── Stats row (ปรับเป็น 4 คอลัมน์เพื่อรองรับ High Score) ─── */
     .stats {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
       margin-bottom: 24px;
     }
     .stat-box {
       background: var(--surface2);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 14px;
+      padding: 12px 6px;
       text-align: center;
-      transition: border-color .3s;
+      transition: border-color .3s, transform .2s;
     }
     .stat-box.active { border-color: var(--accent); }
-    .stat-label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
-    .stat-value { font-size: 1.4rem; font-weight: 700; }
+    .stat-label { font-size: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+    .stat-value { font-size: 1.2rem; font-weight: 700; transition: color 0.2s; }
     .stat-value.green { color: var(--green); }
     .stat-value.blue  { color: var(--accent); }
     .stat-value.purple { color: var(--accent2); }
+    .stat-value.gold { color: var(--gold); }
 
     /* ─── Progress bar ─── */
     .progress-wrap {
@@ -136,6 +138,21 @@
       transition: width .4s ease;
       width: 0%;
     }
+
+    /* ─── Level indicator ─── */
+    .level-row {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 8px;
+    }
+    .level-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--muted);
+      transition: background .3s;
+    }
+    .level-dot.done { background: var(--green); }
+    .level-dot.active { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
+    .level-dot.danger { background: var(--red); box-shadow: 0 0 6px var(--red); }
+    .level-text { font-size: 0.7rem; color: var(--muted); margin-left: auto; }
 
     /* ─── Game arena ─── */
     .arena {
@@ -171,6 +188,33 @@
     .arena-msg .title { font-size: 1rem; font-weight: 600; }
     .arena-msg .sub { font-size: 0.78rem; color: var(--muted); }
 
+    .countdown-overlay {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(13,15,20,.85);
+      border-radius: 12px;
+      font-size: 4rem;
+      font-weight: 700;
+      color: var(--accent);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+      z-index: 5;
+    }
+    .countdown-overlay.visible { opacity: 1; pointer-events: all; }
+    .miss-flash {
+      position: absolute; inset: 0;
+      background: rgba(248,113,113,.07);
+      pointer-events: none;
+      opacity: 0;
+      border-radius: 12px;
+    }
+    .miss-flash.flash { animation: miss-anim .3s ease; }
+    @keyframes miss-anim {
+      0%  { opacity: 1; }
+      100%{ opacity: 0; }
+    }
+
     /* ─── Target dot ─── */
     .target {
       position: absolute;
@@ -190,7 +234,6 @@
       to   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
     }
 
-    /* shrink ring */
     .target-inner {
       width: 100%; height: 100%;
       border-radius: 50%;
@@ -205,20 +248,6 @@
     @keyframes shrink-ring {
       from { transform: scale(1.8); opacity: 1; }
       to   { transform: scale(1);   opacity: 0; }
-    }
-
-    /* ─── Miss flash ─── */
-    .miss-flash {
-      position: absolute; inset: 0;
-      background: rgba(248,113,113,.07);
-      pointer-events: none;
-      opacity: 0;
-      border-radius: 12px;
-    }
-    .miss-flash.flash { animation: miss-anim .3s ease; }
-    @keyframes miss-anim {
-      0%  { opacity: 1; }
-      100%{ opacity: 0; }
     }
 
     /* ─── Buttons ─── */
@@ -259,38 +288,7 @@
     }
     .tip-card strong { color: var(--text); }
 
-    /* ─── Level indicator ─── */
-    .level-row {
-      display: flex; align-items: center; gap: 8px;
-      margin-bottom: 8px;
-    }
-    .level-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--muted);
-      transition: background .3s;
-    }
-    .level-dot.done { background: var(--green); }
-    .level-dot.active { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
-    .level-dot.danger { background: var(--red); box-shadow: 0 0 6px var(--red); }
-    .level-text { font-size: 0.7rem; color: var(--muted); margin-left: auto; }
-
-    /* ─── Countdown overlay ─── */
-    .countdown-overlay {
-      position: absolute; inset: 0;
-      display: flex; align-items: center; justify-content: center;
-      background: rgba(13,15,20,.85);
-      border-radius: 12px;
-      font-size: 4rem;
-      font-weight: 700;
-      color: var(--accent);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .2s;
-      z-index: 5;
-    }
-    .countdown-overlay.visible { opacity: 1; pointer-events: all; }
-
-    /* ─── JUMPSCARE ─── */
+    /* ─── JUMPSCARE OVERLAY ─── */
     #jumpscare {
       position: fixed; inset: 0;
       display: none;
@@ -302,7 +300,6 @@
       overflow: hidden;
     }
     #jumpscare.active { display: flex; }
-
     #jumpscare img {
       position: absolute; inset: 0;
       width: 100%; height: 100%;
@@ -310,7 +307,6 @@
       object-position: center;
       animation: scare-zoom 0.18s cubic-bezier(0.05,0.9,0.3,1) forwards;
     }
-
     @keyframes scare-zoom {
       0%   { transform: scale(0.05) rotate(-15deg); filter: brightness(8) saturate(3); opacity:0; }
       30%  { opacity:1; }
@@ -318,7 +314,6 @@
       100% { transform: scale(1) rotate(0deg); filter: brightness(1) saturate(1); }
     }
 
-    /* red vignette overlay */
     #scare-vignette {
       position: absolute; inset: 0;
       pointer-events: none;
@@ -328,10 +323,9 @@
     }
     @keyframes vignette-pulse {
       0%,100% { opacity: 1; }
-      50%     { opacity: 0.35; }
+      50%      { opacity: 0.35; }
     }
 
-    /* strobe layer */
     #scare-strobe {
       position: fixed; inset: 0;
       pointer-events: none;
@@ -357,7 +351,6 @@
       to   { opacity: 0; }
     }
 
-    /* BRUTAL screen shake */
     @keyframes shake {
       0%  { transform: translate(0,0) rotate(0deg) scale(1); }
       5%  { transform: translate(-28px, 20px) rotate(-4deg) scale(1.04); }
@@ -383,7 +376,6 @@
     }
     #jumpscare.shake { animation: shake 0.9s cubic-bezier(0.36,0.07,0.19,0.97) both; }
 
-    /* after-scare restart */
     .restart-msg {
       position: fixed; bottom: 36px; left: 0; right: 0;
       text-align: center;
@@ -400,7 +392,6 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* pulse when near jumpscare */
     body.danger-mode .arena {
       animation: border-pulse .6s ease infinite;
     }
@@ -409,13 +400,19 @@
       50% { border-color: var(--red); box-shadow: 0 0 40px rgba(248,113,113,.5), inset 0 0 30px rgba(248,113,113,.1); }
     }
 
-    /* danger bg flash */
     body.danger-mode {
       animation: bg-danger-pulse .8s ease infinite;
     }
     @keyframes bg-danger-pulse {
       0%,100% { background: var(--bg); }
-      50%     { background: #130808; }
+      50%      { background: #130808; }
+    }
+
+    /* ปรับปรุงให้หน้าจอมือถือไม่เบียดเกินไปเมื่อมี 4 คอลัมน์ */
+    @media (max-width: 480px) {
+      .stat-value { font-size: 1rem; }
+      .stat-label { font-size: 0.5rem; }
+      .stats { gap: 6px; }
     }
   </style>
 </head>
@@ -426,7 +423,7 @@
   <div class="logo">🎯</div>
   <div class="header-text">
     <h1>Reaction Speed Test</h1>
-    <p>Cognitive Performance Analysis · v2.4</p>
+    <p>Cognitive Performance Analysis · v2.5</p>
   </div>
   <div class="badge">BETA</div>
 </div>
@@ -434,11 +431,15 @@
 <!-- ─── MAIN CARD ─── -->
 <div class="card">
 
-  <!-- Stats -->
+  <!-- Stats Grid (4 Columns รองรับ High Score) -->
   <div class="stats">
     <div class="stat-box" id="stat-score">
       <div class="stat-label">Score</div>
       <div class="stat-value green" id="score-val">0</div>
+    </div>
+    <div class="stat-box" id="stat-highscore">
+      <div class="stat-label">⭐ High Score</div>
+      <div class="stat-value gold" id="highscore-val">0</div>
     </div>
     <div class="stat-box active" id="stat-rt">
       <div class="stat-label">Avg. Reaction</div>
@@ -485,7 +486,7 @@
     <div class="countdown-overlay" id="countdown">3</div>
     <div class="miss-flash" id="miss-flash"></div>
 
-    <!-- Target dot (spawned by JS) -->
+    <!-- Target dot -->
     <div class="target" id="target">
       <div class="target-inner" id="target-inner">
         <div class="ring" id="target-ring"></div>
@@ -517,22 +518,26 @@
 // ═══════════════════════════════════════════════
 //  CONFIG
 // ═══════════════════════════════════════════════
-const TOTAL_ROUNDS  = 20;      // จำนวน round ก่อน jumpscare
-const SCARE_ROUND   = 20;      // round ที่ trigger jumpscare
-const DANGER_FROM   = 15;      // เริ่ม danger mode (เปลี่ยนสี)
-const BASE_SIZE     = 64;      // ขนาดเริ่มต้น (px)
+const TOTAL_ROUNDS  = 20;      
+const SCARE_ROUND   = 20;      
+const DANGER_FROM   = 15;      
+const BASE_SIZE     = 64;      
 const MIN_SIZE      = 36;
-const BASE_TIMEOUT  = 2200;    // ms ก่อนที่ dot จะหาย
+const BASE_TIMEOUT  = 2200;    
 const MIN_TIMEOUT   = 900;
 
 // ═══════════════════════════════════════════════
-//  STATE
+//  STATE (ดึงข้อมูล High Score เก่ามาแสดงตอนเริ่ม)
 // ═══════════════════════════════════════════════
 let score = 0, round = 0, hits = 0, misses = 0;
+let highscore = localStorage.getItem('reaction_high_score') ? parseInt(localStorage.getItem('reaction_high_score')) : 0;
 let reactions = [];
 let running = false;
 let dotTimer = null, appearTime = 0;
 let audioCtx = null;
+
+// แสดงสถิติสูงสุดที่เบราว์เซอร์เคยจำไว้ทันทีเมื่อโหลดหน้าเว็บ
+document.getElementById('highscore-val').textContent = highscore;
 
 const LEVEL_NAMES = [
   'Level 1 · Warm-up',
@@ -547,7 +552,7 @@ const LEVEL_NAMES = [
 ];
 
 // ═══════════════════════════════════════════════
-//  AUDIO  (Web Audio API — no file needed)
+//  AUDIO (Web Audio API)
 // ═══════════════════════════════════════════════
 function ensureAudio() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -599,123 +604,80 @@ function playDanger() {
   } catch(e){}
 }
 
-// ═══════════════ JUMPSCARE SCREAM (EXTREME) ═══════════════
+// ═══════════════ JUMPSCARE SCREAM (UPGRADED: BRUTAL DISTORTION) ═══════════════
 function playScream() {
   try {
     ensureAudio();
     const sr = audioCtx.sampleRate;
-    const duration = 4.5;
+    const duration = 5.0; // ลากเสียงหวีดร้องยาวขึ้นสะใจ
     const bufSize = sr * duration;
 
-    // ── Layer 1: Synthesised Scream Buffer ──
+    // ── Layer 1: สังเคราะห์เสียงหวีดร้องสัตว์ประหลาด ──
     const screamBuf = audioCtx.createBuffer(2, bufSize, sr);
     for (let ch = 0; ch < 2; ch++) {
       const d = screamBuf.getChannelData(ch);
       for (let i = 0; i < bufSize; i++) {
         const t  = i / sr;
-        const env = Math.min(1, t * 20) * Math.pow(Math.max(0, 1 - t / duration), 0.35);
-        // pitch rises frantically then falls
-        const pitch = 200 + 600 * Math.pow(Math.sin(Math.PI * t / 1.2), 2)
-                    + Math.sin(t * 23) * 140
-                    + Math.sin(t * 47) * 80;
-        const pitch2 = pitch * 2.03 + Math.sin(t * 11) * 60;
-        const pitch3 = pitch * 3.07 + Math.sin(t * 7)  * 100;
-        const pitch4 = pitch * 0.51 + Math.sin(t * 31) * 50;
-        // heavy pink noise for breath/rough texture
+        const env = Math.min(1, t * 30) * Math.pow(Math.max(0, 1 - t / duration), 0.4);
+        
+        // Tremolo/Ring modulation: ปล่อยคลื่นความถี่สั่นสยองในคอแบบถี่ๆ 
+        const tremolo = 1 + 0.35 * Math.sin(t * 90);
+        const pitch = (140 + 850 * Math.pow(Math.sin(Math.PI * t / 1.4), 1.5)) * tremolo;
+        
         const noise  = (Math.random() * 2 - 1);
+        const subRumble = Math.sin(t * 45) * 0.45; // คลื่นสั่นต่ำแบบหลอนประสาท
+        
         const val =
-            Math.sin(2 * Math.PI * pitch  * t) * 0.55
-          + Math.sin(2 * Math.PI * pitch2 * t) * 0.32
-          + Math.sin(2 * Math.PI * pitch3 * t) * 0.20
-          + Math.sin(2 * Math.PI * pitch4 * t) * 0.18
-          + noise * 0.38
-          + Math.sin(2 * Math.PI * 60 * t + Math.sin(t * 400) * 8) * 0.15; // sub-rumble
-        d[i] = Math.tanh(val * 2.8) * env; // waveshaper-like soft clip
+            Math.sin(2 * Math.PI * pitch * t) * 0.40
+          + Math.sin(2 * Math.PI * (pitch * 1.52) * t) * 0.30
+          + Math.sin(2 * Math.PI * (pitch * 2.18) * t) * 0.25
+          + noise * 0.60 // ยัดความสากหยาบของคลื่นเสียง (Noise)
+          + subRumble;
+          
+        d[i] = Math.tanh(val * 5.0) * env; // Soft clipping บีบอัดเสียงให้หนาแน่น
       }
     }
 
-    // ── Layer 2: Deep sub-bass BOOM ──
-    const boomBuf = audioCtx.createBuffer(1, sr * 1.5, sr);
+    // ── Layer 2: Deep sub-bass BOOM แบบกระแทกหูขวัญผวาขีดสุด ──
+    const boomBuf = audioCtx.createBuffer(1, sr * 2.0, sr);
     const bd = boomBuf.getChannelData(0);
     for (let i = 0; i < boomBuf.length; i++) {
       const t   = i / sr;
-      const env = Math.exp(-t * 3.5);
-      bd[i] = Math.sin(2 * Math.PI * (55 - t * 30) * t) * env
-            + (Math.random() * 2 - 1) * 0.12 * env;
+      const env = Math.exp(-t * 4.0);
+      bd[i] = Math.tanh(Math.sin(2 * Math.PI * (65 - t * 40) * t) * 3) * env * 2.5;
     }
 
-    // ── Layer 3: Distorted shriek stabs ──
-    function makeShriek(freq, delay) {
-      const len = sr * 0.6;
-      const buf = audioCtx.createBuffer(1, len, sr);
-      const d   = buf.getChannelData(0);
-      for (let i = 0; i < len; i++) {
-        const t   = i / sr;
-        const env = Math.pow(Math.max(0, 1 - t / 0.6), 0.4);
-        d[i] = Math.tanh(Math.sin(2 * Math.PI * (freq + t * 400) * t) * 5) * env;
-      }
-      const src = audioCtx.createBufferSource();
-      src.buffer = buf;
-      const g = audioCtx.createGain();
-      g.gain.setValueAtTime(0.9, audioCtx.currentTime + delay);
-      src.connect(g); g.connect(audioCtx.destination);
-      src.start(audioCtx.currentTime + delay);
-    }
-    makeShriek(880,  0.0);
-    makeShriek(1320, 0.06);
-    makeShriek(660,  0.11);
-    makeShriek(1760, 0.17);
-    makeShriek(550,  0.25);
-
-    // ── Waveshaper distortion for scream ──
+    // ── Waveshaper Distortion (ระบบทำเสียงแตกโอเวอร์ไดรฟ์แบบโหดเหี้ยม) ──
     const ws = audioCtx.createWaveShaper();
-    const curve = new Float32Array(256);
-    for (let i = 0; i < 256; i++) {
-      const x = (i * 2) / 256 - 1;
-      curve[i] = (Math.PI + 600) * x / (Math.PI + 600 * Math.abs(x));
+    const curve = new Float32Array(512);
+    for (let i = 0; i < 512; i++) {
+      const x = (i * 2) / 512 - 1;
+      // สูตรเร่งและฉีกสัญญาณเสียงให้แตกกระแทกสะใจหู
+      curve[i] = Math.sign(x) * (1 - Math.exp(-Math.abs(x * 8)));
     }
     ws.curve = curve;
     ws.oversample = '4x';
 
-    // ── Reverb (convolver with noise IR) ──
-    const revLen = sr * 2;
-    const revBuf = audioCtx.createBuffer(2, revLen, sr);
-    for (let ch = 0; ch < 2; ch++) {
-      const d = revBuf.getChannelData(ch);
-      for (let i = 0; i < revLen; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / revLen, 1.5);
-    }
-    const conv = audioCtx.createConvolver();
-    conv.buffer = revBuf;
-
-    // ── Master chain ──
+    // ── Master Chain Config ──
     const masterGain = audioCtx.createGain();
     masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
-    masterGain.gain.linearRampToValueAtTime(3.5, audioCtx.currentTime + 0.02);   // instant SLAM
-    masterGain.gain.setValueAtTime(3.5, audioCtx.currentTime + 0.5);
+    masterGain.gain.linearRampToValueAtTime(4.5, audioCtx.currentTime + 0.01); // โผล่ปุ๊บกระแทกหูทันทีใน 0.01 วินาที!
+    masterGain.gain.setValueAtTime(4.5, audioCtx.currentTime + 0.8);
     masterGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-
-    const dryGain = audioCtx.createGain();
-    dryGain.gain.value = 0.65;
-    const wetGain = audioCtx.createGain();
-    wetGain.gain.value = 0.5;
 
     const screamSrc = audioCtx.createBufferSource();
     screamSrc.buffer = screamBuf;
+    
+    // เชื่อมวงจรสายเสียง
     screamSrc.connect(ws);
-    ws.connect(dryGain);
-    dryGain.connect(masterGain);
-    ws.connect(conv);
-    conv.connect(wetGain);
-    wetGain.connect(masterGain);
+    ws.connect(masterGain);
     masterGain.connect(audioCtx.destination);
     screamSrc.start();
 
-    // Boom layer
+    // รันเสียงซับเบสระเบิด
     const boomSrc = audioCtx.createBufferSource();
     boomSrc.buffer = boomBuf;
-    const boomGain = audioCtx.createGain();
-    boomGain.gain.value = 2.2;
-    boomSrc.connect(boomGain); boomGain.connect(audioCtx.destination);
+    boomSrc.connect(audioCtx.destination);
     boomSrc.start();
 
   } catch(e) { console.warn('Audio failed:', e); }
@@ -752,6 +714,11 @@ function resetGame() {
   clearTimeout(dotTimer);
   running = false;
   score = 0; round = 0; hits = 0; misses = 0; reactions = [];
+  
+  // รีเซ็ตการแสดงผลสีตัวเลข High Score กลับมาปกติ
+  document.getElementById('highscore-val').style.color = '';
+  document.getElementById('stat-highscore').style.transform = '';
+  
   updateUI();
   hideTarget();
   document.getElementById('arena-msg').style.display = 'flex';
@@ -771,7 +738,6 @@ function nextRound() {
     return;
   }
 
-  // danger mode visual
   if (round >= DANGER_FROM) {
     document.body.classList.add('danger-mode');
     if (round === DANGER_FROM) playDanger();
@@ -781,7 +747,6 @@ function nextRound() {
   updateLevelLabel();
   setProgress(((round - 1) / TOTAL_ROUNDS) * 100);
 
-  // Dynamic difficulty
   const progress = (round - 1) / (TOTAL_ROUNDS - 1);
   const size = Math.round(BASE_SIZE - (BASE_SIZE - MIN_SIZE) * progress);
   const timeout = Math.round(BASE_TIMEOUT - (BASE_TIMEOUT - MIN_TIMEOUT) * progress);
@@ -800,9 +765,8 @@ function spawnTarget(size, timeout) {
   const x  = Math.random() * aw + size / 2 + 8;
   const y  = Math.random() * ah + size / 2 + 8;
 
-  // Color changes with level
   const progress = (round - 1) / (TOTAL_ROUNDS - 1);
-  const hue  = Math.round(210 - progress * 180); // blue → red
+  const hue  = Math.round(210 - progress * 180); 
   const col  = `hsl(${hue},80%,60%)`;
   const col2 = `hsl(${hue - 30},80%,45%)`;
 
@@ -817,9 +781,8 @@ function spawnTarget(size, timeout) {
   ring.style.animationDuration = timeout + 'ms';
   ring.style.borderColor = col;
 
-  // Reset animation
   ring.style.animation = 'none';
-  ring.offsetHeight; // force reflow
+  ring.offsetHeight; 
   ring.style.animation = `shrink-ring ${timeout}ms linear forwards`;
 
   target.classList.add('show');
@@ -847,7 +810,6 @@ function handleTargetClick(e) {
   reactions.push(rt);
   hits++;
 
-  // score: faster = more points
   const pts = Math.max(10, Math.round(300 - rt / 6));
   score += pts;
 
@@ -873,7 +835,6 @@ function miss() {
   setTimeout(nextRound, 400);
 }
 
-// Arena click = miss (clicked empty area)
 document.getElementById('arena').addEventListener('click', function(e) {
   if (e.target !== this) return;
   if (!running) return;
@@ -885,10 +846,22 @@ document.getElementById('arena').addEventListener('click', function(e) {
 document.getElementById('target').addEventListener('click', handleTargetClick);
 
 // ═══════════════════════════════════════════════
-//  UI UPDATES
+//  REAL-TIME UI & HIGH SCORE UPDATES
 // ═══════════════════════════════════════════════
 function updateUI() {
+  // อัปเดตคะแนนรอบปัจจุบันแบบวิลานาทีต่อวินาที
   document.getElementById('score-val').textContent = score;
+
+  // 🔥 [REAL-TIME HIGH SCORE] ตรวจสอบสถิติสูงสุดและเขียนจำทับลงเครื่องผู้เล่นทันทีที่แต้มเพิ่ม!
+  if (score > highscore) {
+    highscore = score;
+    localStorage.setItem('reaction_high_score', highscore); // เซฟทันทีแบบเรียลไทม์
+    document.getElementById('highscore-val').textContent = highscore;
+    
+    // ลูกเล่นภาพ: เปลี่ยนกล่อง High Score ให้เด่นขึ้นเพื่อสื่อว่ากำลังสร้างสถิติใหม่คาตา!
+    document.getElementById('highscore-val').style.color = 'var(--green)';
+    document.getElementById('stat-highscore').style.transform = 'scale(1.03)';
+  }
 
   if (reactions.length > 0) {
     const avg = Math.round(reactions.reduce((a,b)=>a+b,0) / reactions.length);
@@ -932,7 +905,6 @@ function updateDots() {
   }
 }
 
-// ─── Hit feedback floating text ───
 function showHitFeedback(pts, cx, cy) {
   const div = document.createElement('div');
   div.textContent = '+' + pts;
@@ -947,7 +919,6 @@ function showHitFeedback(pts, cx, cy) {
   setTimeout(() => div.remove(), 700);
 }
 
-// float-up keyframes (injected once)
 const ks = document.createElement('style');
 ks.textContent = `@keyframes float-up {
   0%   { opacity:1; transform:translateY(0) scale(1); }
@@ -956,7 +927,7 @@ ks.textContent = `@keyframes float-up {
 document.head.appendChild(ks);
 
 // ═══════════════════════════════════════════════
-//  JUMPSCARE
+//  JUMPSCARE TRIGGER SYSTEM
 // ═══════════════════════════════════════════════
 function triggerJumpscare() {
   running = false;
@@ -964,16 +935,15 @@ function triggerJumpscare() {
   hideTarget();
   document.body.classList.remove('danger-mode');
 
-  // ── Phase 1: Multi-strobe white flash ──
+  // ── แฟลชสโตรบแสงขาว ──
   const strobe = document.createElement('div');
   strobe.id = 'scare-strobe';
   document.body.appendChild(strobe);
   setTimeout(() => strobe.remove(), 700);
 
-  // ── Phase 2: Show jumpscare overlay almost immediately ──
+  // ── เปิดการทำงานของระบบกระชากหน้าต่างผีหลอก ──
   setTimeout(() => {
     const js = document.getElementById('jumpscare');
-    // make sure vignette is present
     let vign = document.getElementById('scare-vignette');
     if (!vign) {
       vign = document.createElement('div');
@@ -982,11 +952,11 @@ function triggerJumpscare() {
     }
     js.classList.add('active');
 
-    // ── brutal shake — run 3 times ──
+    // ระบบสั่นระเบิดหน้าจอ 3 จังหวะต่อเนื่อง
     let shakeCount = 0;
     function doShake() {
       js.classList.remove('shake');
-      void js.offsetWidth; // force reflow
+      void js.offsetWidth; 
       js.classList.add('shake');
       shakeCount++;
       if (shakeCount < 3) setTimeout(doShake, 920);
@@ -994,7 +964,7 @@ function triggerJumpscare() {
     }
     setTimeout(doShake, 0);
 
-    // ── additional red flash pulses ──
+    // ปล่อยคลื่นแฟลชสีแดงฉานกระแทกตาซ้ำๆ
     [0.1, 0.22, 0.38].forEach(delay => {
       setTimeout(() => {
         const f = document.createElement('div');
@@ -1004,12 +974,12 @@ function triggerJumpscare() {
       }, delay * 1000);
     });
 
-    // ── play EXTREME scream ──
+    // แผดเสียงสังเคราะห์ความโหดระดับขีดสุด
     playScream();
   }, 40);
 }
 
-// click anywhere to dismiss jumpscare
+// คลิกตรงไหนก็ได้หลังโดนหลอกเพื่อเริ่มชีวิตใหม่
 document.getElementById('jumpscare').addEventListener('click', () => {
   document.getElementById('jumpscare').classList.remove('active');
   resetGame();
@@ -1017,3 +987,5 @@ document.getElementById('jumpscare').addEventListener('click', () => {
 </script>
 </body>
 </html>
+
+```

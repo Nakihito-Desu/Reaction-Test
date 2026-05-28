@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🧠 Reaction Speed Test – v2.4</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0f14;
+      --surface: #161a24;
+      --surface2: #1e2330;
+      --border: #2a3045;
+      --accent: #4f8ef7;
+      --accent2: #7c5cfc;
+      --green: #34d399;
+      --red: #f87171;
+      --text: #e8ecf4;
+      --muted: #6b7a99;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 24px 16px 48px;
+      overflow-x: hidden;
+    }
+
+    /* ─── Header ─── */
+    .header {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .logo {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 10px;
+      display: grid; place-items: center;
+      font-size: 20px;
+    }
+    .header-text h1 { font-size: 1.1rem; font-weight: 700; }
+    .header-text p { font-size: 0.75rem; color: var(--muted); }
+    .badge {
+      margin-left: auto;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    /* ─── Card ─── */
+    .card {
+      width: 100%;
+      max-width: 680px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 16px;
+    }
+
+    /* ─── Stats row ─── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+      transition: border-color .3s;
+    }
+    .stat-box.active { border-color: var(--accent); }
+    .stat-label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+    .stat-value { font-size: 1.4rem; font-weight: 700; }
+    .stat-value.green { color: var(--green); }
+    .stat-value.blue  { color: var(--accent); }
+    .stat-value.purple { color: var(--accent2); }
+
+    /* ─── Progress bar ─── */
+    .progress-wrap {
+      margin-bottom: 20px;
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .progress-track {
+      height: 8px;
+      background: var(--surface2);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 99px;
+      transition: width .4s ease;
+      width: 0%;
+    }
+
+    /* ─── Game arena ─── */
+    .arena {
+      width: 100%;
+      height: 320px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 20px;
+      cursor: crosshair;
+    }
+
+    /* grid overlay */
+    .arena::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(79,142,247,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(79,142,247,.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    .arena-msg {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 12px;
+      pointer-events: none;
+    }
+    .arena-msg .icon { font-size: 2.5rem; }
+    .arena-msg .title { font-size: 1rem; font-weight: 600; }
+    .arena-msg .sub { font-size: 0.78rem; color: var(--muted); }
+
+    /* ─── Target dot ─── */
+    .target {
+      position: absolute;
+      border-radius: 50%;
+      cursor: pointer;
+      transform: translate(-50%, -50%);
+      display: none;
+      pointer-events: all;
+      transition: none;
+    }
+    .target.show {
+      display: block;
+      animation: pop-in .12s ease-out;
+    }
+    @keyframes pop-in {
+      from { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+      to   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+
+    /* shrink ring */
+    .target-inner {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      position: relative;
+    }
+    .ring {
+      position: absolute; inset: 0;
+      border-radius: 50%;
+      border: 3px solid rgba(255,255,255,.4);
+      animation: shrink-ring linear forwards;
+    }
+    @keyframes shrink-ring {
+      from { transform: scale(1.8); opacity: 1; }
+      to   { transform: scale(1);   opacity: 0; }
+    }
+
+    /* ─── Miss flash ─── */
+    .miss-flash {
+      position: absolute; inset: 0;
+      background: rgba(248,113,113,.07);
+      pointer-events: none;
+      opacity: 0;
+      border-radius: 12px;
+    }
+    .miss-flash.flash { animation: miss-anim .3s ease; }
+    @keyframes miss-anim {
+      0%  { opacity: 1; }
+      100%{ opacity: 0; }
+    }
+
+    /* ─── Buttons ─── */
+    .btn-row { display: flex; gap: 10px; }
+    .btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .18s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+    }
+    .btn-primary:hover { filter: brightness(1.15); transform: translateY(-1px); }
+    .btn-ghost {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .btn-ghost:hover { color: var(--text); border-color: var(--accent); }
+
+    /* ─── Tip card ─── */
+    .tip-card {
+      width: 100%; max-width: 680px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .tip-card strong { color: var(--text); }
+
+    /* ─── Level indicator ─── */
+    .level-row {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 8px;
+    }
+    .level-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--muted);
+      transition: background .3s;
+    }
+    .level-dot.done { background: var(--green); }
+    .level-dot.active { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
+    .level-dot.danger { background: var(--red); box-shadow: 0 0 6px var(--red); }
+    .level-text { font-size: 0.7rem; color: var(--muted); margin-left: auto; }
+
+    /* ─── Countdown overlay ─── */
+    .countdown-overlay {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(13,15,20,.85);
+      border-radius: 12px;
+      font-size: 4rem;
+      font-weight: 700;
+      color: var(--accent);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+      z-index: 5;
+    }
+    .countdown-overlay.visible { opacity: 1; pointer-events: all; }
+
+    /* ─── JUMPSCARE ─── */
+    #jumpscare {
+      position: fixed; inset: 0;
+      display: none;
+      z-index: 9999;
+      background: #000;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    #jumpscare.active { display: flex; }
+
+    #jumpscare img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center;
+      animation: scare-zoom 0.4s ease-out;
+    }
+
+    @keyframes scare-zoom {
+      0%   { transform: scale(0.3) rotate(-8deg); filter: brightness(3); }
+      60%  { transform: scale(1.08) rotate(2deg); }
+      100% { transform: scale(1) rotate(0deg); filter: brightness(1); }
+    }
+
+    .scare-flash {
+      position: fixed; inset: 0;
+      background: #fff;
+      z-index: 10000;
+      animation: flash-out .15s ease forwards;
+      pointer-events: none;
+    }
+    @keyframes flash-out {
+      from { opacity: 1; }
+      to   { opacity: 0; }
+    }
+
+    /* screen shake */
+    @keyframes shake {
+      0%,100%{ transform: translate(0,0) rotate(0deg); }
+      10%    { transform: translate(-12px,8px) rotate(-2deg); }
+      20%    { transform: translate(14px,-10px) rotate(3deg); }
+      30%    { transform: translate(-10px,6px) rotate(-1deg); }
+      40%    { transform: translate(12px,-8px) rotate(2deg); }
+      50%    { transform: translate(-8px,10px) rotate(-3deg); }
+      60%    { transform: translate(10px,-6px) rotate(1deg); }
+      70%    { transform: translate(-14px,8px) rotate(-2deg); }
+      80%    { transform: translate(8px,-12px) rotate(3deg); }
+      90%    { transform: translate(-6px,6px) rotate(-1deg); }
+    }
+    #jumpscare.shake { animation: shake .6s ease; }
+
+    /* after-scare restart */
+    .restart-msg {
+      position: fixed; bottom: 36px; left: 0; right: 0;
+      text-align: center;
+      color: rgba(255,255,255,.5);
+      font-size: 0.88rem;
+      z-index: 10001;
+      animation: fade-in-up 1.5s 2s ease forwards;
+      opacity: 0;
+    }
+    @keyframes fade-in-up {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* pulse when near jumpscare */
+    body.danger-mode .arena {
+      animation: border-pulse 1s ease infinite;
+    }
+    @keyframes border-pulse {
+      0%,100% { border-color: var(--border); }
+      50% { border-color: var(--red); box-shadow: 0 0 20px rgba(248,113,113,.25); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── HEADER ─── -->
+<div class="header">
+  <div class="logo">🎯</div>
+  <div class="header-text">
+    <h1>Reaction Speed Test</h1>
+    <p>Cognitive Performance Analysis · v2.4</p>
+  </div>
+  <div class="badge">BETA</div>
+</div>
+
+<!-- ─── MAIN CARD ─── -->
+<div class="card">
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-box" id="stat-score">
+      <div class="stat-label">Score</div>
+      <div class="stat-value green" id="score-val">0</div>
+    </div>
+    <div class="stat-box active" id="stat-rt">
+      <div class="stat-label">Avg. Reaction</div>
+      <div class="stat-value blue" id="rt-val">—</div>
+    </div>
+    <div class="stat-box" id="stat-acc">
+      <div class="stat-label">Accuracy</div>
+      <div class="stat-value purple" id="acc-val">—</div>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span id="level-label">Level 1 · Warm-up</span>
+      <span id="progress-pct">0%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  <!-- Level dots -->
+  <div class="level-row" style="margin-bottom:20px;">
+    <div class="level-dot active" id="dot-0"></div>
+    <div class="level-dot" id="dot-1"></div>
+    <div class="level-dot" id="dot-2"></div>
+    <div class="level-dot" id="dot-3"></div>
+    <div class="level-dot" id="dot-4"></div>
+    <div class="level-dot" id="dot-5"></div>
+    <div class="level-dot" id="dot-6"></div>
+    <div class="level-dot" id="dot-7"></div>
+    <span class="level-text" id="dot-label">Round 0 / 20</span>
+  </div>
+
+  <!-- Arena -->
+  <div class="arena" id="arena">
+    <div class="arena-msg" id="arena-msg">
+      <div class="icon">🧠</div>
+      <div class="title">Reaction Speed Test</div>
+      <div class="sub">กดปุ่ม "เริ่มทดสอบ" เพื่อเริ่มต้น</div>
+    </div>
+
+    <div class="countdown-overlay" id="countdown">3</div>
+    <div class="miss-flash" id="miss-flash"></div>
+
+    <!-- Target dot (spawned by JS) -->
+    <div class="target" id="target">
+      <div class="target-inner" id="target-inner">
+        <div class="ring" id="target-ring"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="btn-row">
+    <button class="btn btn-primary" id="btn-start" onclick="startGame()">▶ เริ่มทดสอบ</button>
+    <button class="btn btn-ghost" id="btn-reset" onclick="resetGame()" disabled>↺ รีเซ็ต</button>
+  </div>
+
+</div>
+
+<!-- ─── TIP ─── -->
+<div class="tip-card">
+  <strong>วิธีเล่น:</strong> คลิกวงกลมที่ปรากฏในกรอบให้เร็วที่สุดเท่าที่ทำได้
+  วงกลมจะปรากฏในตำแหน่งสุ่มและมีเวลาจำกัด ยิ่งตอบสนองเร็ว ยิ่งได้คะแนนมาก 🎯
+</div>
+
+<!-- ─── JUMP SCARE OVERLAY ─── -->
+<div id="jumpscare">
+  <img src="jumpscare.png" alt="" id="scare-img" />
+  <div class="restart-msg">คลิกที่ใดก็ได้เพื่อเล่นอีกครั้ง 😂</div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════
+const TOTAL_ROUNDS  = 20;      // จำนวน round ก่อน jumpscare
+const SCARE_ROUND   = 20;      // round ที่ trigger jumpscare
+const DANGER_FROM   = 15;      // เริ่ม danger mode (เปลี่ยนสี)
+const BASE_SIZE     = 64;      // ขนาดเริ่มต้น (px)
+const MIN_SIZE      = 36;
+const BASE_TIMEOUT  = 2200;    // ms ก่อนที่ dot จะหาย
+const MIN_TIMEOUT   = 900;
+
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+let score = 0, round = 0, hits = 0, misses = 0;
+let reactions = [];
+let running = false;
+let dotTimer = null, appearTime = 0;
+let audioCtx = null;
+
+const LEVEL_NAMES = [
+  'Level 1 · Warm-up',
+  'Level 2 · Getting Faster',
+  'Level 3 · Intermediate',
+  'Level 4 · Advanced',
+  'Level 5 · Expert',
+  'Level 6 · Elite',
+  'Level 7 · Master',
+  'Level 8 · Ultra',
+  'FINAL · Maximum Speed',
+];
+
+// ═══════════════════════════════════════════════
+//  AUDIO  (Web Audio API — no file needed)
+// ═══════════════════════════════════════════════
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playClick() {
+  try {
+    ensureAudio();
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    o.type = 'sine'; o.frequency.setValueAtTime(880, audioCtx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(220, audioCtx.currentTime + .08);
+    g.gain.setValueAtTime(.25, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001, audioCtx.currentTime + .1);
+    o.start(); o.stop(audioCtx.currentTime + .1);
+  } catch(e){}
+}
+
+function playMiss() {
+  try {
+    ensureAudio();
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    o.type = 'sawtooth'; o.frequency.setValueAtTime(180, audioCtx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + .2);
+    g.gain.setValueAtTime(.15, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001, audioCtx.currentTime + .25);
+    o.start(); o.stop(audioCtx.currentTime + .25);
+  } catch(e){}
+}
+
+function playDanger() {
+  try {
+    ensureAudio();
+    [0, .08, .16].forEach(offset => {
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.connect(g); g.connect(audioCtx.destination);
+      o.type = 'square';
+      o.frequency.setValueAtTime(330 + offset * 200, audioCtx.currentTime + offset);
+      g.gain.setValueAtTime(.08, audioCtx.currentTime + offset);
+      g.gain.exponentialRampToValueAtTime(.001, audioCtx.currentTime + offset + .1);
+      o.start(audioCtx.currentTime + offset);
+      o.stop(audioCtx.currentTime + offset + .1);
+    });
+  } catch(e){}
+}
+
+// ═══════════════ JUMPSCARE SCREAM ═══════════════
+function playScream() {
+  try {
+    ensureAudio();
+    const duration = 3;
+    const bufferSize = audioCtx.sampleRate * duration;
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+
+    // Generate creepy screaming noise
+    for (let i = 0; i < bufferSize; i++) {
+      const t = i / audioCtx.sampleRate;
+      // Multiple harmonics for scary effect
+      const f1 = 220 + Math.sin(t * 8) * 80;
+      const f2 = 440 + Math.sin(t * 13) * 120;
+      const f3 = 880 + Math.sin(t * 5) * 200;
+      const noise = (Math.random() * 2 - 1) * 0.3;
+      data[i] = Math.sin(2 * Math.PI * f1 * t) * 0.4
+               + Math.sin(2 * Math.PI * f2 * t) * 0.3
+               + Math.sin(2 * Math.PI * f3 * t) * 0.2
+               + noise;
+    }
+
+    const src = audioCtx.createBufferSource();
+    src.buffer = buffer;
+
+    const gainNode = audioCtx.createGain();
+    gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+    gainNode.gain.linearRampToValueAtTime(2.5, audioCtx.currentTime + 0.05);
+    gainNode.gain.exponentialRampToValueAtTime(.001, audioCtx.currentTime + duration);
+
+    src.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    src.start();
+  } catch(e) { console.warn('Audio failed:', e); }
+}
+
+// ═══════════════════════════════════════════════
+//  GAME LOGIC
+// ═══════════════════════════════════════════════
+function startGame() {
+  ensureAudio();
+  document.getElementById('btn-start').disabled = true;
+  document.getElementById('btn-reset').disabled = false;
+  document.getElementById('arena-msg').style.display = 'none';
+  running = true;
+
+  let c = 3;
+  const cd = document.getElementById('countdown');
+  cd.textContent = c;
+  cd.classList.add('visible');
+
+  const iv = setInterval(() => {
+    c--;
+    if (c > 0) {
+      cd.textContent = c;
+    } else {
+      clearInterval(iv);
+      cd.classList.remove('visible');
+      nextRound();
+    }
+  }, 800);
+}
+
+function resetGame() {
+  clearTimeout(dotTimer);
+  running = false;
+  score = 0; round = 0; hits = 0; misses = 0; reactions = [];
+  updateUI();
+  hideTarget();
+  document.getElementById('arena-msg').style.display = 'flex';
+  document.getElementById('btn-start').disabled = false;
+  document.getElementById('btn-reset').disabled = true;
+  document.getElementById('countdown').classList.remove('visible');
+  document.body.classList.remove('danger-mode');
+  setProgress(0);
+}
+
+function nextRound() {
+  if (!running) return;
+
+  round++;
+  if (round > TOTAL_ROUNDS) {
+    triggerJumpscare();
+    return;
+  }
+
+  // danger mode visual
+  if (round >= DANGER_FROM) {
+    document.body.classList.add('danger-mode');
+    if (round === DANGER_FROM) playDanger();
+  }
+
+  updateDots();
+  updateLevelLabel();
+  setProgress(((round - 1) / TOTAL_ROUNDS) * 100);
+
+  // Dynamic difficulty
+  const progress = (round - 1) / (TOTAL_ROUNDS - 1);
+  const size = Math.round(BASE_SIZE - (BASE_SIZE - MIN_SIZE) * progress);
+  const timeout = Math.round(BASE_TIMEOUT - (BASE_TIMEOUT - MIN_TIMEOUT) * progress);
+
+  spawnTarget(size, timeout);
+}
+
+function spawnTarget(size, timeout) {
+  const arena = document.getElementById('arena');
+  const target = document.getElementById('target');
+  const ring = document.getElementById('target-ring');
+  const inner = document.getElementById('target-inner');
+
+  const aw = arena.offsetWidth  - size - 16;
+  const ah = arena.offsetHeight - size - 16;
+  const x  = Math.random() * aw + size / 2 + 8;
+  const y  = Math.random() * ah + size / 2 + 8;
+
+  // Color changes with level
+  const progress = (round - 1) / (TOTAL_ROUNDS - 1);
+  const hue  = Math.round(210 - progress * 180); // blue → red
+  const col  = `hsl(${hue},80%,60%)`;
+  const col2 = `hsl(${hue - 30},80%,45%)`;
+
+  target.style.left   = x + 'px';
+  target.style.top    = y + 'px';
+  target.style.width  = size + 'px';
+  target.style.height = size + 'px';
+
+  inner.style.background = `radial-gradient(circle at 35% 35%, ${col}, ${col2})`;
+  inner.style.boxShadow  = `0 0 ${size * .4}px ${col}66`;
+
+  ring.style.animationDuration = timeout + 'ms';
+  ring.style.borderColor = col;
+
+  // Reset animation
+  ring.style.animation = 'none';
+  ring.offsetHeight; // force reflow
+  ring.style.animation = `shrink-ring ${timeout}ms linear forwards`;
+
+  target.classList.add('show');
+  appearTime = Date.now();
+
+  dotTimer = setTimeout(() => {
+    if (running) {
+      miss();
+    }
+  }, timeout);
+}
+
+function hideTarget() {
+  const t = document.getElementById('target');
+  t.classList.remove('show');
+}
+
+function handleTargetClick(e) {
+  e.stopPropagation();
+  if (!running) return;
+  clearTimeout(dotTimer);
+  hideTarget();
+
+  const rt = Date.now() - appearTime;
+  reactions.push(rt);
+  hits++;
+
+  // score: faster = more points
+  const pts = Math.max(10, Math.round(300 - rt / 6));
+  score += pts;
+
+  playClick();
+  showHitFeedback(pts, e.clientX, e.clientY);
+  updateUI();
+
+  setTimeout(nextRound, 350);
+}
+
+function miss() {
+  if (!running) return;
+  hideTarget();
+  misses++;
+  playMiss();
+
+  const mf = document.getElementById('miss-flash');
+  mf.classList.remove('flash');
+  mf.offsetHeight;
+  mf.classList.add('flash');
+
+  updateUI();
+  setTimeout(nextRound, 400);
+}
+
+// Arena click = miss (clicked empty area)
+document.getElementById('arena').addEventListener('click', function(e) {
+  if (e.target !== this) return;
+  if (!running) return;
+  clearTimeout(dotTimer);
+  hideTarget();
+  miss();
+});
+
+document.getElementById('target').addEventListener('click', handleTargetClick);
+
+// ═══════════════════════════════════════════════
+//  UI UPDATES
+// ═══════════════════════════════════════════════
+function updateUI() {
+  document.getElementById('score-val').textContent = score;
+
+  if (reactions.length > 0) {
+    const avg = Math.round(reactions.reduce((a,b)=>a+b,0) / reactions.length);
+    document.getElementById('rt-val').textContent = avg + 'ms';
+  }
+
+  const total = hits + misses;
+  if (total > 0) {
+    document.getElementById('acc-val').textContent =
+      Math.round((hits / total) * 100) + '%';
+  }
+
+  document.getElementById('dot-label').textContent =
+    `Round ${Math.min(round, TOTAL_ROUNDS)} / ${TOTAL_ROUNDS}`;
+}
+
+function setProgress(pct) {
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent  = Math.round(pct) + '%';
+}
+
+function updateLevelLabel() {
+  const idx = Math.min(Math.floor((round - 1) / (TOTAL_ROUNDS / LEVEL_NAMES.length)), LEVEL_NAMES.length - 1);
+  document.getElementById('level-label').textContent = LEVEL_NAMES[idx];
+}
+
+function updateDots() {
+  for (let i = 0; i < 8; i++) {
+    const d = document.getElementById('dot-' + i);
+    const threshold = Math.round((i / 7) * TOTAL_ROUNDS);
+    if (round - 1 > threshold) {
+      d.classList.remove('active','danger');
+      d.classList.add('done');
+    } else if (Math.abs(round - 1 - threshold) < (TOTAL_ROUNDS / 14)) {
+      d.classList.remove('done','danger');
+      if (round >= DANGER_FROM) d.classList.add('danger');
+      else d.classList.add('active');
+    } else {
+      d.classList.remove('done','active','danger');
+    }
+  }
+}
+
+// ─── Hit feedback floating text ───
+function showHitFeedback(pts, cx, cy) {
+  const div = document.createElement('div');
+  div.textContent = '+' + pts;
+  div.style.cssText = `
+    position:fixed; left:${cx}px; top:${cy}px;
+    color:#34d399; font-weight:700; font-size:1rem;
+    pointer-events:none; z-index:1000;
+    animation: float-up .7s ease forwards;
+    text-shadow: 0 0 8px #34d399;
+  `;
+  document.body.appendChild(div);
+  setTimeout(() => div.remove(), 700);
+}
+
+// float-up keyframes (injected once)
+const ks = document.createElement('style');
+ks.textContent = `@keyframes float-up {
+  0%   { opacity:1; transform:translateY(0) scale(1); }
+  100% { opacity:0; transform:translateY(-50px) scale(1.3); }
+}`;
+document.head.appendChild(ks);
+
+// ═══════════════════════════════════════════════
+//  JUMPSCARE
+// ═══════════════════════════════════════════════
+function triggerJumpscare() {
+  running = false;
+  clearTimeout(dotTimer);
+  hideTarget();
+  document.body.classList.remove('danger-mode');
+
+  // white flash
+  const flash = document.createElement('div');
+  flash.className = 'scare-flash';
+  document.body.appendChild(flash);
+  setTimeout(() => flash.remove(), 200);
+
+  // show overlay
+  setTimeout(() => {
+    const js = document.getElementById('jumpscare');
+    js.classList.add('active');
+
+    // screen shake
+    setTimeout(() => {
+      js.classList.add('shake');
+      setTimeout(() => js.classList.remove('shake'), 700);
+    }, 100);
+
+    // play scream
+    playScream();
+  }, 80);
+}
+
+// click anywhere to dismiss jumpscare
+document.getElementById('jumpscare').addEventListener('click', () => {
+  document.getElementById('jumpscare').classList.remove('active');
+  resetGame();
+});
+</script>
+</body>
+</html>

@@ -317,11 +317,10 @@
       border-radius: 50%;
       cursor: pointer;
       transform: translate(-50%, -50%);
-      display: none;
       z-index: 3;
+      pointer-events: all;
     }
     .reflex-target.show {
-      display: block;
       animation: pop-target 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
     @keyframes pop-target {
@@ -672,12 +671,7 @@
           <button class="play-btn" id="start-btn" onclick="initializeDiagnosticPerformance()">▶ เริ่มทดสอบประสาท</button>
         </div>
 
-        <!-- Target Dot Container -->
-        <div class="reflex-target" id="target">
-          <div class="reflex-target-core" id="target-core">
-            <div class="target-ring" id="target-ring"></div>
-          </div>
-        </div>
+        <!-- Targets are dynamically generated in JS -->
 
         <!-- Calibration Phase Overlay -->
         <div class="calibration-screen" id="calibration-overlay">
@@ -805,8 +799,8 @@
   let failedClicks = 0;
   let responseLatencyLog = [];
   
-  let targetTimer = null;
-  let targetAppearTime = 0;
+  let activeTargets = [];
+  let roundEnded = false;
   
   let canvas, ctx;
   let clickParticles = [];
@@ -903,11 +897,15 @@
       r.style.setProperty('--neon-pink', '#ff5722');
     }
     
-    // Quick core visual update if dynamic target is there
-    const core = document.getElementById('target-core');
-    if (core && isBenchmarking) {
-      updateTargetColorProperties();
-    }
+    // Quick core visual update if dynamic targets are there
+    const targets = document.querySelectorAll('.reflex-target');
+    targets.forEach(t => {
+      const core = t.querySelector('.reflex-target-core');
+      const ring = t.querySelector('.target-ring');
+      if (core && ring) {
+        updateTargetColorProperties(core, ring);
+      }
+    });
   }
 
   function adjustSoundEngine() {
@@ -1123,8 +1121,7 @@
   // ==========================================
   function executeInterruptProtocol() {
     isBenchmarking = false;
-    clearTimeout(targetTimer);
-    hideTargetInterface();
+    clearAllActiveTargets();
     document.body.classList.remove('danger-mode');
 
     // Dynamically insert high-contrast strobe grid
@@ -1252,7 +1249,7 @@
   }
 
   function resetDiagnosticEngine() {
-    clearTimeout(targetTimer);
+    clearAllActiveTargets();
     isBenchmarking = false;
     calibrationRound = 0;
     scorePoints = 0;
@@ -1261,13 +1258,19 @@
     responseLatencyLog = [];
     
     updateStatisticsUI();
-    hideTargetInterface();
     
     document.getElementById('arena-msg').classList.remove('hidden');
     document.getElementById('start-btn').disabled = false;
     document.body.classList.remove('danger-mode');
     setProgressTracker(0);
     updateGraphData();
+  }
+
+  function clearAllActiveTargets() {
+    activeTargets.forEach(t => clearTimeout(t.timer));
+    activeTargets = [];
+    const elements = document.querySelectorAll('.reflex-target');
+    elements.forEach(el => el.remove());
   }
 
   function beginNextCalibrationRound() {
@@ -1307,45 +1310,161 @@
 
     // Dynamic timeout contraction (milliseconds)
     const timeoutValue = Math.round(2300 - (2300 - 850) * rawProgress);
-    spawnDiagnosticTarget(sizeValue, timeoutValue);
+    
+    // Reset active targets for round
+    clearAllActiveTargets();
+    roundEnded = false;
+
+    // Spawn 1, 2, or 3 targets based on levels
+    let targetsToSpawn = 1;
+    if (calibrationRound > 15) {
+      targetsToSpawn = 3;
+    } else if (calibrationRound > 10) {
+      targetsToSpawn = 3;
+    } else if (calibrationRound > 5) {
+      targetsToSpawn = 2;
+    } else {
+      targetsToSpawn = 1;
+    }
+
+    for (let i = 0; i < targetsToSpawn; i++) {
+      spawnDiagnosticTarget(sizeValue, timeoutValue);
+    }
   }
 
   function spawnDiagnosticTarget(size, timeout) {
     const arena = document.getElementById('arena');
-    const target = document.getElementById('target');
-    const ring = document.getElementById('target-ring');
-
     const boundX = arena.offsetWidth - size - 20;
     const boundY = arena.offsetHeight - size - 20;
-    const randomX = Math.random() * boundX + size / 2 + 10;
-    const randomY = Math.random() * boundY + size / 2 + 10;
 
+    let randomX = 0, randomY = 0;
+    let attempts = 0;
+    let isOverlapping = false;
+    
+    // Check overlap with other active targets to prevent stacking
+    do {
+      randomX = Math.random() * boundX + size / 2 + 10;
+      randomY = Math.random() * boundY + size / 2 + 10;
+      isOverlapping = false;
+      
+      const elements = document.querySelectorAll('.reflex-target');
+      for (const el of elements) {
+        const elX = parseFloat(el.style.left);
+        const elY = parseFloat(el.style.top);
+        const dist = Math.hypot(elX - randomX, elY - randomY);
+        if (dist < size + 15) {
+          isOverlapping = true;
+          break;
+        }
+      }
+      attempts++;
+    } while (isOverlapping && attempts < 20);
+
+    const target = document.createElement('div');
+    target.className = 'reflex-target show';
     target.style.left = randomX + 'px';
     target.style.top = randomY + 'px';
     target.style.width = size + 'px';
     target.style.height = size + 'px';
 
-    updateTargetColorProperties();
+    const core = document.createElement('div');
+    core.className = 'reflex-target-core';
+    const ring = document.createElement('div');
+    ring.className = 'target-ring';
+
+    core.appendChild(ring);
+    target.appendChild(core);
+
+    updateTargetColorProperties(core, ring);
 
     ring.style.animationDuration = timeout + 'ms';
     ring.style.animation = 'none';
-    ring.offsetHeight; // reflow trigger
+    void ring.offsetHeight; // force reflow
     ring.style.animation = `shrink-target-ring ${timeout}ms linear forwards`;
 
-    target.classList.add('show');
-    targetAppearTime = Date.now();
+    arena.appendChild(target);
+    const appearTime = Date.now();
 
-    targetTimer = setTimeout(() => {
-      if (isBenchmarking) {
-        triggerMissEvent();
+    const timer = setTimeout(() => {
+      if (isBenchmarking && !roundEnded) {
+        target.remove();
+        activeTargets = activeTargets.filter(t => t.element !== target);
+        
+        failedClicks++;
+        playSampleBeep(180, 0.22);
+
+        const flashElement = document.getElementById('miss-flash');
+        flashElement.classList.remove('flash');
+        void flashElement.offsetHeight; // reflow
+        flashElement.classList.add('flash');
+
+        updateStatisticsUI();
+        checkRoundState();
       }
     }, timeout);
+
+    const newTarget = {
+      element: target,
+      timer: timer,
+      appearTime: appearTime
+    };
+
+    activeTargets.push(newTarget);
+
+    const handleInteraction = (e) => {
+      e.stopPropagation();
+      e.preventDefault(); // Prevents double firing touch + click
+      if (!isBenchmarking || roundEnded) return;
+
+      const idx = activeTargets.findIndex(t => t.element === target);
+      if (idx === -1) return;
+
+      const targetData = activeTargets[idx];
+      clearTimeout(targetData.timer);
+      activeTargets.splice(idx, 1);
+      target.remove();
+
+      const reactionTime = Date.now() - targetData.appearTime;
+      responseLatencyLog.push(reactionTime);
+      successfulClicks++;
+
+      const earnedPoints = Math.max(15, Math.round(350 - reactionTime / 5));
+      scorePoints += earnedPoints;
+
+      // Extract client coords from touch or click
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      const arenaRect = arena.getBoundingClientRect();
+      const particleX = clientX - arenaRect.left;
+      const particleY = clientY - arenaRect.top;
+
+      let hueValue = 200;
+      if (activeTheme === 'neon') hueValue = 330;
+      else if (activeTheme === 'emerald') hueValue = 110;
+      const bulletColor = `hsl(${hueValue}, 100%, 55%)`;
+
+      spawnNeonBurst(particleX, particleY, bulletColor);
+      playSampleBeep(750, 0.08);
+      showFloatingScorePopup(earnedPoints, clientX, clientY);
+      updateStatisticsUI();
+      updateGraphData();
+
+      checkRoundState();
+    };
+
+    target.addEventListener('mousedown', handleInteraction);
+    target.addEventListener('touchstart', handleInteraction, { passive: false });
   }
 
-  function updateTargetColorProperties() {
-    const core = document.getElementById('target-core');
-    const ring = document.getElementById('target-ring');
-    
+  function checkRoundState() {
+    if (activeTargets.length === 0 && !roundEnded) {
+      roundEnded = true;
+      setTimeout(beginNextCalibrationRound, 320);
+    }
+  }
+
+  function updateTargetColorProperties(core, ring) {
+    if (!core || !ring) return;
     const rawProgress = (calibrationRound - 1) / (MAX_BENCHMARK_SAMPLES - 1);
     
     let hueValue = 200; // default cyber cyan
@@ -1365,71 +1484,24 @@
     ring.style.borderColor = c1;
   }
 
-  function hideTargetInterface() {
-    document.getElementById('target').classList.remove('show');
-  }
-
-  // Handle successful hit
-  document.getElementById('target').addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (!isBenchmarking) return;
+  // Arena miss click
+  document.getElementById('arena').addEventListener('click', (e) => {
+    if (e.target !== e.currentTarget) return;
+    if (!isBenchmarking || roundEnded) return;
     
-    clearTimeout(targetTimer);
-    hideTargetInterface();
-
-    const reactionTime = Date.now() - targetAppearTime;
-    responseLatencyLog.push(reactionTime);
-    successfulClicks++;
-
-    // Scoring scaling speed points
-    const earnedPoints = Math.max(15, Math.round(350 - reactionTime / 5));
-    scorePoints += earnedPoints;
-
-    // Trigger visual explosions
-    let hueValue = 200;
-    if (activeTheme === 'neon') hueValue = 330;
-    else if (activeTheme === 'emerald') hueValue = 110;
-    const bulletColor = `hsl(${hueValue}, 100%, 55%)`;
+    roundEnded = true;
+    clearAllActiveTargets();
     
-    const arenaRect = document.getElementById('arena').getBoundingClientRect();
-    const particleX = e.clientX - arenaRect.left;
-    const particleY = e.clientY - arenaRect.top;
-    
-    spawnNeonBurst(particleX, particleY, bulletColor);
-    
-    // Play sound FX
-    playSampleBeep(750, 0.08);
-    showFloatingScorePopup(earnedPoints, e.clientX, e.clientY);
-    updateStatisticsUI();
-    updateGraphData();
-
-    setTimeout(beginNextCalibrationRound, 320);
-  });
-
-  function triggerMissEvent() {
-    if (!isBenchmarking) return;
-    hideTargetInterface();
     failedClicks++;
-    
-    // Miss sound FX
     playSampleBeep(180, 0.22);
 
     const flashElement = document.getElementById('miss-flash');
     flashElement.classList.remove('flash');
-    flashElement.offsetHeight; // reflow
+    void flashElement.offsetHeight; // reflow
     flashElement.classList.add('flash');
 
     updateStatisticsUI();
     setTimeout(beginNextCalibrationRound, 380);
-  }
-
-  // Arena miss click
-  document.getElementById('arena').addEventListener('click', (e) => {
-    if (e.target !== e.currentTarget) return;
-    if (!isBenchmarking) return;
-    
-    clearTimeout(targetTimer);
-    triggerMissEvent();
   });
 
   // ==========================================

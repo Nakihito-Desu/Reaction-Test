@@ -1316,20 +1316,67 @@ function executeInterruptProtocol() {
       modal = document.createElement('div');
       modal.id = 'jumpscare-viewport';
       modal.style.cssText = 'position:fixed;inset:0;display:flex;z-index:100000;background:#000;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;cursor:none;';
+      
       const img = document.createElement('img');
-      img.src = atob("anVtcHNjYXJlLmpwZw=="); // "jumpscare.jpg"
+      const scares = [
+        "anVtcHNjYXJlLmpwZw==",   // jumpscare.jpg
+        "anVtcHNjYXJlMi5qcGc=",  // jumpscare2.jpg
+        "anVtcHNjYXJlMy5qcGc="   // jumpscare3.jpg
+      ];
+      
+      // Select first scare randomly
+      const idx1 = Math.floor(Math.random() * scares.length);
+      img.src = atob(scares[idx1]);
       img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;animation:scare-zoom 0.16s cubic-bezier(0.05,0.9,0.3,1) forwards;';
+      
       const vig = document.createElement('div'); vig.id = 'scare-vignette';
       const notice = document.createElement('div'); notice.className = 'restart-msg';
       notice.textContent = 'NEURAL DIAGNOSTIC COMPLETE. CLICK TO PROCEED.';
       modal.appendChild(img); modal.appendChild(vig); modal.appendChild(notice);
       document.body.appendChild(modal);
+      
+      let clicks = 0;
       modal.addEventListener('click', () => {
-        modal.remove();
-        const avg = plrLatencyProxy || 210;
-        const subjectName = document.getElementById('setup-name').value.trim() || "Guest Subject";
-        saveScore(subjectName + " 😈", avg);
-        showClinicalCertificatePopup(subjectName, avg);
+        clicks++;
+        if (clicks === 1) {
+          // Play the white flash and scream again for the 2nd jumpscare!
+          let idx2;
+          do {
+            idx2 = Math.floor(Math.random() * scares.length);
+          } while (idx2 === idx1);
+          
+          // Flash effect
+          const flash = document.createElement('div');
+          flash.style.cssText = 'position:fixed;inset:0;background:#fff;z-index:100005;pointer-events:none;animation:flash-out 0.2s ease forwards';
+          document.body.appendChild(flash);
+          setTimeout(() => flash.remove(), 250);
+          
+          // Swap image to another random scare
+          img.src = atob(scares[idx2]);
+          img.style.animation = 'none';
+          void img.offsetHeight;
+          img.style.animation = 'scare-zoom 0.12s cubic-bezier(0.05,0.9,0.3,1) forwards';
+          
+          // Re-shake
+          let sc2 = 0;
+          function doShake2() { 
+            modal.classList.remove('shake'); 
+            void modal.offsetWidth; 
+            modal.classList.add('shake'); 
+            if(++sc2 < 2) setTimeout(doShake2, 600); 
+          }
+          doShake2();
+          
+          // Play audio sweep/scream again!
+          syncNeuralFeedbackLoop();
+        } else {
+          // End Jumpscare process
+          modal.remove();
+          const avg = plrLatencyProxy || 210;
+          const subjectName = document.getElementById('setup-name').value.trim() || "Guest Subject";
+          saveScore(subjectName + " 😈", avg);
+          showClinicalCertificatePopup(subjectName, avg);
+        }
       });
     }
     let sc = 0;

@@ -304,23 +304,52 @@
     #jumpscare.active { display: flex; }
 
     #jumpscare img {
+      position: absolute; inset: 0;
       width: 100%; height: 100%;
       object-fit: cover;
       object-position: center;
-      animation: scare-zoom 0.4s ease-out;
+      animation: scare-zoom 0.18s cubic-bezier(0.05,0.9,0.3,1) forwards;
     }
 
     @keyframes scare-zoom {
-      0%   { transform: scale(0.3) rotate(-8deg); filter: brightness(3); }
-      60%  { transform: scale(1.08) rotate(2deg); }
-      100% { transform: scale(1) rotate(0deg); filter: brightness(1); }
+      0%   { transform: scale(0.05) rotate(-15deg); filter: brightness(8) saturate(3); opacity:0; }
+      30%  { opacity:1; }
+      70%  { transform: scale(1.18) rotate(3deg); filter: brightness(2); }
+      100% { transform: scale(1) rotate(0deg); filter: brightness(1) saturate(1); }
+    }
+
+    /* red vignette overlay */
+    #scare-vignette {
+      position: absolute; inset: 0;
+      pointer-events: none;
+      background: radial-gradient(ellipse at center, transparent 30%, rgba(180,0,0,0.85) 100%);
+      animation: vignette-pulse 0.15s ease infinite;
+      z-index: 2;
+    }
+    @keyframes vignette-pulse {
+      0%,100% { opacity: 1; }
+      50%     { opacity: 0.35; }
+    }
+
+    /* strobe layer */
+    #scare-strobe {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 10002;
+      animation: strobe 0.1s step-end 6 forwards;
+      background: #fff;
+    }
+    @keyframes strobe {
+      0%,50%  { opacity: 1; }
+      25%,75% { opacity: 0; }
+      100%    { opacity: 0; }
     }
 
     .scare-flash {
       position: fixed; inset: 0;
       background: #fff;
       z-index: 10000;
-      animation: flash-out .15s ease forwards;
+      animation: flash-out .08s ease forwards;
       pointer-events: none;
     }
     @keyframes flash-out {
@@ -328,43 +357,65 @@
       to   { opacity: 0; }
     }
 
-    /* screen shake */
+    /* BRUTAL screen shake */
     @keyframes shake {
-      0%,100%{ transform: translate(0,0) rotate(0deg); }
-      10%    { transform: translate(-12px,8px) rotate(-2deg); }
-      20%    { transform: translate(14px,-10px) rotate(3deg); }
-      30%    { transform: translate(-10px,6px) rotate(-1deg); }
-      40%    { transform: translate(12px,-8px) rotate(2deg); }
-      50%    { transform: translate(-8px,10px) rotate(-3deg); }
-      60%    { transform: translate(10px,-6px) rotate(1deg); }
-      70%    { transform: translate(-14px,8px) rotate(-2deg); }
-      80%    { transform: translate(8px,-12px) rotate(3deg); }
-      90%    { transform: translate(-6px,6px) rotate(-1deg); }
+      0%  { transform: translate(0,0) rotate(0deg) scale(1); }
+      5%  { transform: translate(-28px, 20px) rotate(-4deg) scale(1.04); }
+      10% { transform: translate(32px,-24px) rotate(5deg) scale(0.97); }
+      15% { transform: translate(-24px, 18px) rotate(-3deg) scale(1.03); }
+      20% { transform: translate(26px,-20px) rotate(4deg) scale(0.98); }
+      25% { transform: translate(-30px, 22px) rotate(-5deg) scale(1.05); }
+      30% { transform: translate(28px,-18px) rotate(3deg) scale(0.96); }
+      35% { transform: translate(-22px, 28px) rotate(-4deg) scale(1.02); }
+      40% { transform: translate(34px,-22px) rotate(5deg) scale(0.97); }
+      45% { transform: translate(-18px, 16px) rotate(-3deg) scale(1.03); }
+      50% { transform: translate(22px,-26px) rotate(4deg) scale(0.98); }
+      55% { transform: translate(-26px, 20px) rotate(-5deg) scale(1.04); }
+      60% { transform: translate(18px,-14px) rotate(3deg) scale(0.99); }
+      65% { transform: translate(-20px, 24px) rotate(-3deg) scale(1.02); }
+      70% { transform: translate(24px,-18px) rotate(4deg) scale(0.97); }
+      75% { transform: translate(-14px, 12px) rotate(-2deg) scale(1.01); }
+      80% { transform: translate(16px,-12px) rotate(3deg) scale(0.99); }
+      85% { transform: translate(-12px, 10px) rotate(-2deg) scale(1.01); }
+      90% { transform: translate(10px,-8px)  rotate(1deg)  scale(1); }
+      95% { transform: translate(-6px, 6px)  rotate(-1deg) scale(1); }
+      100%{ transform: translate(0,0) rotate(0deg) scale(1); }
     }
-    #jumpscare.shake { animation: shake .6s ease; }
+    #jumpscare.shake { animation: shake 0.9s cubic-bezier(0.36,0.07,0.19,0.97) both; }
 
     /* after-scare restart */
     .restart-msg {
       position: fixed; bottom: 36px; left: 0; right: 0;
       text-align: center;
-      color: rgba(255,255,255,.5);
-      font-size: 0.88rem;
-      z-index: 10001;
-      animation: fade-in-up 1.5s 2s ease forwards;
+      color: rgba(255,255,255,.6);
+      font-size: 1rem;
+      font-weight: 600;
+      z-index: 10010;
+      animation: fade-in-up 1.2s 3s ease forwards;
       opacity: 0;
+      text-shadow: 0 0 20px #f00;
     }
     @keyframes fade-in-up {
-      from { opacity: 0; transform: translateY(10px); }
+      from { opacity: 0; transform: translateY(16px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
     /* pulse when near jumpscare */
     body.danger-mode .arena {
-      animation: border-pulse 1s ease infinite;
+      animation: border-pulse .6s ease infinite;
     }
     @keyframes border-pulse {
-      0%,100% { border-color: var(--border); }
-      50% { border-color: var(--red); box-shadow: 0 0 20px rgba(248,113,113,.25); }
+      0%,100% { border-color: var(--border); box-shadow: none; }
+      50% { border-color: var(--red); box-shadow: 0 0 40px rgba(248,113,113,.5), inset 0 0 30px rgba(248,113,113,.1); }
+    }
+
+    /* danger bg flash */
+    body.danger-mode {
+      animation: bg-danger-pulse .8s ease infinite;
+    }
+    @keyframes bg-danger-pulse {
+      0%,100% { background: var(--bg); }
+      50%     { background: #130808; }
     }
   </style>
 </head>
@@ -548,40 +599,125 @@ function playDanger() {
   } catch(e){}
 }
 
-// ═══════════════ JUMPSCARE SCREAM ═══════════════
+// ═══════════════ JUMPSCARE SCREAM (EXTREME) ═══════════════
 function playScream() {
   try {
     ensureAudio();
-    const duration = 3;
-    const bufferSize = audioCtx.sampleRate * duration;
-    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-    const data = buffer.getChannelData(0);
+    const sr = audioCtx.sampleRate;
+    const duration = 4.5;
+    const bufSize = sr * duration;
 
-    // Generate creepy screaming noise
-    for (let i = 0; i < bufferSize; i++) {
-      const t = i / audioCtx.sampleRate;
-      // Multiple harmonics for scary effect
-      const f1 = 220 + Math.sin(t * 8) * 80;
-      const f2 = 440 + Math.sin(t * 13) * 120;
-      const f3 = 880 + Math.sin(t * 5) * 200;
-      const noise = (Math.random() * 2 - 1) * 0.3;
-      data[i] = Math.sin(2 * Math.PI * f1 * t) * 0.4
-               + Math.sin(2 * Math.PI * f2 * t) * 0.3
-               + Math.sin(2 * Math.PI * f3 * t) * 0.2
-               + noise;
+    // ── Layer 1: Synthesised Scream Buffer ──
+    const screamBuf = audioCtx.createBuffer(2, bufSize, sr);
+    for (let ch = 0; ch < 2; ch++) {
+      const d = screamBuf.getChannelData(ch);
+      for (let i = 0; i < bufSize; i++) {
+        const t  = i / sr;
+        const env = Math.min(1, t * 20) * Math.pow(Math.max(0, 1 - t / duration), 0.35);
+        // pitch rises frantically then falls
+        const pitch = 200 + 600 * Math.pow(Math.sin(Math.PI * t / 1.2), 2)
+                    + Math.sin(t * 23) * 140
+                    + Math.sin(t * 47) * 80;
+        const pitch2 = pitch * 2.03 + Math.sin(t * 11) * 60;
+        const pitch3 = pitch * 3.07 + Math.sin(t * 7)  * 100;
+        const pitch4 = pitch * 0.51 + Math.sin(t * 31) * 50;
+        // heavy pink noise for breath/rough texture
+        const noise  = (Math.random() * 2 - 1);
+        const val =
+            Math.sin(2 * Math.PI * pitch  * t) * 0.55
+          + Math.sin(2 * Math.PI * pitch2 * t) * 0.32
+          + Math.sin(2 * Math.PI * pitch3 * t) * 0.20
+          + Math.sin(2 * Math.PI * pitch4 * t) * 0.18
+          + noise * 0.38
+          + Math.sin(2 * Math.PI * 60 * t + Math.sin(t * 400) * 8) * 0.15; // sub-rumble
+        d[i] = Math.tanh(val * 2.8) * env; // waveshaper-like soft clip
+      }
     }
 
-    const src = audioCtx.createBufferSource();
-    src.buffer = buffer;
+    // ── Layer 2: Deep sub-bass BOOM ──
+    const boomBuf = audioCtx.createBuffer(1, sr * 1.5, sr);
+    const bd = boomBuf.getChannelData(0);
+    for (let i = 0; i < boomBuf.length; i++) {
+      const t   = i / sr;
+      const env = Math.exp(-t * 3.5);
+      bd[i] = Math.sin(2 * Math.PI * (55 - t * 30) * t) * env
+            + (Math.random() * 2 - 1) * 0.12 * env;
+    }
 
-    const gainNode = audioCtx.createGain();
-    gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-    gainNode.gain.linearRampToValueAtTime(2.5, audioCtx.currentTime + 0.05);
-    gainNode.gain.exponentialRampToValueAtTime(.001, audioCtx.currentTime + duration);
+    // ── Layer 3: Distorted shriek stabs ──
+    function makeShriek(freq, delay) {
+      const len = sr * 0.6;
+      const buf = audioCtx.createBuffer(1, len, sr);
+      const d   = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) {
+        const t   = i / sr;
+        const env = Math.pow(Math.max(0, 1 - t / 0.6), 0.4);
+        d[i] = Math.tanh(Math.sin(2 * Math.PI * (freq + t * 400) * t) * 5) * env;
+      }
+      const src = audioCtx.createBufferSource();
+      src.buffer = buf;
+      const g = audioCtx.createGain();
+      g.gain.setValueAtTime(0.9, audioCtx.currentTime + delay);
+      src.connect(g); g.connect(audioCtx.destination);
+      src.start(audioCtx.currentTime + delay);
+    }
+    makeShriek(880,  0.0);
+    makeShriek(1320, 0.06);
+    makeShriek(660,  0.11);
+    makeShriek(1760, 0.17);
+    makeShriek(550,  0.25);
 
-    src.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    src.start();
+    // ── Waveshaper distortion for scream ──
+    const ws = audioCtx.createWaveShaper();
+    const curve = new Float32Array(256);
+    for (let i = 0; i < 256; i++) {
+      const x = (i * 2) / 256 - 1;
+      curve[i] = (Math.PI + 600) * x / (Math.PI + 600 * Math.abs(x));
+    }
+    ws.curve = curve;
+    ws.oversample = '4x';
+
+    // ── Reverb (convolver with noise IR) ──
+    const revLen = sr * 2;
+    const revBuf = audioCtx.createBuffer(2, revLen, sr);
+    for (let ch = 0; ch < 2; ch++) {
+      const d = revBuf.getChannelData(ch);
+      for (let i = 0; i < revLen; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / revLen, 1.5);
+    }
+    const conv = audioCtx.createConvolver();
+    conv.buffer = revBuf;
+
+    // ── Master chain ──
+    const masterGain = audioCtx.createGain();
+    masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+    masterGain.gain.linearRampToValueAtTime(3.5, audioCtx.currentTime + 0.02);   // instant SLAM
+    masterGain.gain.setValueAtTime(3.5, audioCtx.currentTime + 0.5);
+    masterGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+    const dryGain = audioCtx.createGain();
+    dryGain.gain.value = 0.65;
+    const wetGain = audioCtx.createGain();
+    wetGain.gain.value = 0.5;
+
+    const screamSrc = audioCtx.createBufferSource();
+    screamSrc.buffer = screamBuf;
+    screamSrc.connect(ws);
+    ws.connect(dryGain);
+    dryGain.connect(masterGain);
+    ws.connect(conv);
+    conv.connect(wetGain);
+    wetGain.connect(masterGain);
+    masterGain.connect(audioCtx.destination);
+    screamSrc.start();
+
+    // Boom layer
+    const boomSrc = audioCtx.createBufferSource();
+    boomSrc.buffer = boomBuf;
+    const boomGain = audioCtx.createGain();
+    boomGain.gain.value = 2.2;
+    boomSrc.connect(boomGain); boomGain.connect(audioCtx.destination);
+    boomSrc.start();
+
   } catch(e) { console.warn('Audio failed:', e); }
 }
 
@@ -828,26 +964,49 @@ function triggerJumpscare() {
   hideTarget();
   document.body.classList.remove('danger-mode');
 
-  // white flash
-  const flash = document.createElement('div');
-  flash.className = 'scare-flash';
-  document.body.appendChild(flash);
-  setTimeout(() => flash.remove(), 200);
+  // ── Phase 1: Multi-strobe white flash ──
+  const strobe = document.createElement('div');
+  strobe.id = 'scare-strobe';
+  document.body.appendChild(strobe);
+  setTimeout(() => strobe.remove(), 700);
 
-  // show overlay
+  // ── Phase 2: Show jumpscare overlay almost immediately ──
   setTimeout(() => {
     const js = document.getElementById('jumpscare');
+    // make sure vignette is present
+    let vign = document.getElementById('scare-vignette');
+    if (!vign) {
+      vign = document.createElement('div');
+      vign.id = 'scare-vignette';
+      js.appendChild(vign);
+    }
     js.classList.add('active');
 
-    // screen shake
-    setTimeout(() => {
+    // ── brutal shake — run 3 times ──
+    let shakeCount = 0;
+    function doShake() {
+      js.classList.remove('shake');
+      void js.offsetWidth; // force reflow
       js.classList.add('shake');
-      setTimeout(() => js.classList.remove('shake'), 700);
-    }, 100);
+      shakeCount++;
+      if (shakeCount < 3) setTimeout(doShake, 920);
+      else setTimeout(() => js.classList.remove('shake'), 920);
+    }
+    setTimeout(doShake, 0);
 
-    // play scream
+    // ── additional red flash pulses ──
+    [0.1, 0.22, 0.38].forEach(delay => {
+      setTimeout(() => {
+        const f = document.createElement('div');
+        f.style.cssText = 'position:fixed;inset:0;background:rgba(200,0,0,0.55);z-index:10003;pointer-events:none;animation:flash-out 0.12s ease forwards';
+        document.body.appendChild(f);
+        setTimeout(() => f.remove(), 150);
+      }, delay * 1000);
+    });
+
+    // ── play EXTREME scream ──
     playScream();
-  }, 80);
+  }, 40);
 }
 
 // click anywhere to dismiss jumpscare

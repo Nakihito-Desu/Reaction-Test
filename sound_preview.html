@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>🔊 Sound Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0d0f14;
+      color: #e8ecf4;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+    }
+    h1 { font-size: 1.2rem; color: #6b7a99; }
+    .btn {
+      padding: 16px 40px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .18s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-scream {
+      background: linear-gradient(135deg, #f87171, #7f1d1d);
+      color: #fff;
+      box-shadow: 0 0 30px rgba(248,113,113,.4);
+    }
+    .btn-scream:hover { filter: brightness(1.2); transform: scale(1.04); }
+    .btn-click {
+      background: linear-gradient(135deg, #4f8ef7, #7c5cfc);
+      color: #fff;
+    }
+    .btn-click:hover { filter: brightness(1.2); transform: scale(1.04); }
+    .btn-miss {
+      background: #1e2330;
+      border: 1px solid #2a3045;
+      color: #6b7a99;
+    }
+    .btn-miss:hover { border-color: #f87171; color: #e8ecf4; }
+    .btn-danger {
+      background: linear-gradient(135deg, #f59e0b, #b45309);
+      color: #fff;
+    }
+    .btn-danger:hover { filter: brightness(1.2); transform: scale(1.04); }
+    .label { font-size: 0.72rem; color: #6b7a99; text-align: center; }
+    .row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .warning {
+      font-size: 0.8rem;
+      color: #f87171;
+      background: rgba(248,113,113,.08);
+      border: 1px solid rgba(248,113,113,.25);
+      border-radius: 8px;
+      padding: 10px 20px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🔊 ทดสอบเสียงในเกม</h1>
+
+<div class="warning">⚠️ ลดเสียงก่อนกด Jumpscare Scream!</div>
+
+<div class="row">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+    <button class="btn btn-scream" onclick="playScream()">💀 Jumpscare Scream</button>
+    <span class="label">เสียงกรีดร้อง + distortion + reverb</span>
+  </div>
+</div>
+
+<div class="row">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+    <button class="btn btn-click" onclick="playClick()">✅ Hit Click</button>
+    <span class="label">คลิกโดนเป้า</span>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+    <button class="btn btn-miss" onclick="playMiss()">❌ Miss</button>
+    <span class="label">คลิกพลาด</span>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+    <button class="btn btn-danger" onclick="playDanger()">⚠️ Danger</button>
+    <span class="label">เสียงเตือน รอบ 15+</span>
+  </div>
+</div>
+
+<script>
+let audioCtx = null;
+
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playClick() {
+  try {
+    ensureAudio();
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    o.type = 'sine'; o.frequency.setValueAtTime(880, audioCtx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(220, audioCtx.currentTime + .08);
+    g.gain.setValueAtTime(.25, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001, audioCtx.currentTime + .1);
+    o.start(); o.stop(audioCtx.currentTime + .1);
+  } catch(e){}
+}
+
+function playMiss() {
+  try {
+    ensureAudio();
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    o.type = 'sawtooth'; o.frequency.setValueAtTime(180, audioCtx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + .2);
+    g.gain.setValueAtTime(.15, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001, audioCtx.currentTime + .25);
+    o.start(); o.stop(audioCtx.currentTime + .25);
+  } catch(e){}
+}
+
+function playDanger() {
+  try {
+    ensureAudio();
+    [0, .08, .16].forEach(offset => {
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.connect(g); g.connect(audioCtx.destination);
+      o.type = 'square';
+      o.frequency.setValueAtTime(330 + offset * 200, audioCtx.currentTime + offset);
+      g.gain.setValueAtTime(.08, audioCtx.currentTime + offset);
+      g.gain.exponentialRampToValueAtTime(.001, audioCtx.currentTime + offset + .1);
+      o.start(audioCtx.currentTime + offset);
+      o.stop(audioCtx.currentTime + offset + .1);
+    });
+  } catch(e){}
+}
+
+function playScream() {
+  try {
+    ensureAudio();
+    const sr = audioCtx.sampleRate;
+    const duration = 4.5;
+    const bufSize = sr * duration;
+
+    const screamBuf = audioCtx.createBuffer(2, bufSize, sr);
+    for (let ch = 0; ch < 2; ch++) {
+      const d = screamBuf.getChannelData(ch);
+      for (let i = 0; i < bufSize; i++) {
+        const t  = i / sr;
+        const env = Math.min(1, t * 20) * Math.pow(Math.max(0, 1 - t / duration), 0.35);
+        const pitch = 200 + 600 * Math.pow(Math.sin(Math.PI * t / 1.2), 2)
+                    + Math.sin(t * 23) * 140
+                    + Math.sin(t * 47) * 80;
+        const pitch2 = pitch * 2.03 + Math.sin(t * 11) * 60;
+        const pitch3 = pitch * 3.07 + Math.sin(t * 7)  * 100;
+        const pitch4 = pitch * 0.51 + Math.sin(t * 31) * 50;
+        const noise  = (Math.random() * 2 - 1);
+        const val =
+            Math.sin(2 * Math.PI * pitch  * t) * 0.55
+          + Math.sin(2 * Math.PI * pitch2 * t) * 0.32
+          + Math.sin(2 * Math.PI * pitch3 * t) * 0.20
+          + Math.sin(2 * Math.PI * pitch4 * t) * 0.18
+          + noise * 0.38
+          + Math.sin(2 * Math.PI * 60 * t + Math.sin(t * 400) * 8) * 0.15;
+        d[i] = Math.tanh(val * 2.8) * env;
+      }
+    }
+
+    const boomBuf = audioCtx.createBuffer(1, sr * 1.5, sr);
+    const bd = boomBuf.getChannelData(0);
+    for (let i = 0; i < boomBuf.length; i++) {
+      const t   = i / sr;
+      const env = Math.exp(-t * 3.5);
+      bd[i] = Math.sin(2 * Math.PI * (55 - t * 30) * t) * env
+            + (Math.random() * 2 - 1) * 0.12 * env;
+    }
+
+    function makeShriek(freq, delay) {
+      const len = sr * 0.6;
+      const buf = audioCtx.createBuffer(1, len, sr);
+      const d   = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) {
+        const t   = i / sr;
+        const env = Math.pow(Math.max(0, 1 - t / 0.6), 0.4);
+        d[i] = Math.tanh(Math.sin(2 * Math.PI * (freq + t * 400) * t) * 5) * env;
+      }
+      const src = audioCtx.createBufferSource();
+      src.buffer = buf;
+      const g = audioCtx.createGain();
+      g.gain.setValueAtTime(0.9, audioCtx.currentTime + delay);
+      src.connect(g); g.connect(audioCtx.destination);
+      src.start(audioCtx.currentTime + delay);
+    }
+    makeShriek(880,  0.0);
+    makeShriek(1320, 0.06);
+    makeShriek(660,  0.11);
+    makeShriek(1760, 0.17);
+    makeShriek(550,  0.25);
+
+    const ws = audioCtx.createWaveShaper();
+    const curve = new Float32Array(256);
+    for (let i = 0; i < 256; i++) {
+      const x = (i * 2) / 256 - 1;
+      curve[i] = (Math.PI + 600) * x / (Math.PI + 600 * Math.abs(x));
+    }
+    ws.curve = curve;
+    ws.oversample = '4x';
+
+    const revLen = sr * 2;
+    const revBuf = audioCtx.createBuffer(2, revLen, sr);
+    for (let ch = 0; ch < 2; ch++) {
+      const d = revBuf.getChannelData(ch);
+      for (let i = 0; i < revLen; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / revLen, 1.5);
+    }
+    const conv = audioCtx.createConvolver();
+    conv.buffer = revBuf;
+
+    const masterGain = audioCtx.createGain();
+    masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+    masterGain.gain.linearRampToValueAtTime(3.5, audioCtx.currentTime + 0.02);
+    masterGain.gain.setValueAtTime(3.5, audioCtx.currentTime + 0.5);
+    masterGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+    const dryGain = audioCtx.createGain();
+    dryGain.gain.value = 0.65;
+    const wetGain = audioCtx.createGain();
+    wetGain.gain.value = 0.5;
+
+    const screamSrc = audioCtx.createBufferSource();
+    screamSrc.buffer = screamBuf;
+    screamSrc.connect(ws);
+    ws.connect(dryGain);
+    dryGain.connect(masterGain);
+    ws.connect(conv);
+    conv.connect(wetGain);
+    wetGain.connect(masterGain);
+    masterGain.connect(audioCtx.destination);
+    screamSrc.start();
+
+    const boomSrc = audioCtx.createBufferSource();
+    boomSrc.buffer = boomBuf;
+    const boomGain = audioCtx.createGain();
+    boomGain.gain.value = 2.2;
+    boomSrc.connect(boomGain); boomGain.connect(audioCtx.destination);
+    boomSrc.start();
+
+  } catch(e) { console.warn('Audio failed:', e); }
+}
+</script>
+</body>
+</html>

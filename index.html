@@ -3,750 +3,528 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🧠 NeuralMetric v3.0 - Ultimate Reflex Benchmark</title>
-  <meta name="description" content="วัดดัชนีประสาทสัมผัสและการตอบสนองของสมองด้วยเครื่องมือมาตรฐานระบบประสาทเสมือนจริง" />
-
-  <!-- Open Graph -->
+  <title>🧠 NeuralMetric Pro v3.2 — Cognitive &amp; Ocular Diagnostic Suite</title>
+  <meta name="description" content="ระบบวินิจฉัยสมรรถภาพสมองและการตอบสนองทางประสาทสัมผัสระดับห้องปฏิบัติการวิจัย — IRB Approved" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="🧠 NeuralMetric - แบบทดสอบความเร็วสมอง" />
-  <meta property="og:description" content="วัดค่ามิลลิวินาทีการตอบสนองของคุณด้วยระบบความแม่นยำสูง" />
+  <meta property="og:title" content="🧠 NeuralMetric Pro — Cognitive Diagnostic Suite" />
+  <meta property="og:description" content="ระบบทดสอบสมรรถภาพสมองระดับคลินิก — Motor Reflex, Cognitive Stroop, Ocular PLR" />
   <meta property="og:image" content="preview.png" />
-
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
-  
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg: #060810;
-      --surface: #0e1224;
-      --surface-hover: #161c36;
-      --border: #1f274a;
-      --border-glow: rgba(0, 242, 254, 0.15);
-      
-      --cyan: #00f2fe;
-      --purple: #4facfe;
-      --neon-pink: #ff007f;
-      --neon-green: #39ff14;
-      
-      --text: #e2e8f0;
-      --text-muted: #64748b;
-      --font-main: 'Outfit', sans-serif;
-      --font-mono: 'Share Tech Mono', monospace;
+      --bg: #05060b; --surface: #0b0e1e; --surface-hover: #121832;
+      --border: #182042; --border-glow: rgba(0, 242, 254, 0.15);
+      --cyan: #00f2fe; --purple: #4facfe; --neon-pink: #ff007f; --neon-green: #39ff14;
+      --text: #e2e8f0; --text-muted: #5e6b91;
+      --font-main: 'Outfit', sans-serif; --font-mono: 'Share Tech Mono', monospace;
     }
-
     body {
-      font-family: var(--font-main);
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      overflow-x: hidden;
-      background-image: 
-        radial-gradient(circle at 10% 20%, rgba(79, 172, 254, 0.05) 0%, transparent 40%),
-        radial-gradient(circle at 90% 80%, rgba(0, 242, 254, 0.05) 0%, transparent 40%);
+      font-family: var(--font-main); background: var(--bg); color: var(--text);
+      min-height: 100vh; display: flex; justify-content: center; align-items: flex-start;
+      padding: 20px; overflow-x: hidden;
+      background-image:
+        radial-gradient(circle at 15% 15%, rgba(79,172,254,0.04) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(255,0,127,0.03) 0%, transparent 40%);
     }
 
-    /* Outer Wrapper for Cyberpunk Aesthetic */
+    /* ===================== LAYOUT ===================== */
     .game-wrapper {
-      width: 100%;
-      max-width: 1080px;
-      display: grid;
-      grid-template-columns: 280px 1fr;
-      gap: 20px;
+      width: 100%; max-width: 1140px;
+      display: grid; grid-template-columns: 310px 1fr; gap: 20px;
     }
+    @media (max-width: 960px) { .game-wrapper { grid-template-columns: 1fr; } }
 
-    @media (max-width: 900px) {
-      .game-wrapper {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* Panels styling */
     .panel {
-      background: rgba(14, 18, 36, 0.65);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-      position: relative;
-      overflow: hidden;
+      background: rgba(11,14,30,0.65); backdrop-filter: blur(14px);
+      border: 1px solid var(--border); border-radius: 16px; padding: 22px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.6); position: relative; overflow: hidden;
     }
-
     .panel::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
       background: linear-gradient(90deg, var(--cyan), var(--purple));
     }
+    .sidebar { display: flex; flex-direction: column; gap: 18px; }
+    .main-content { display: flex; flex-direction: column; gap: 18px; }
 
-    /* Left Sidebar */
-    .sidebar {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
+    /* ===================== BRAND & IRB ===================== */
     .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 12px;
+      padding-bottom: 14px; border-bottom: 1px solid var(--border);
     }
     .brand-logo {
-      width: 38px; height: 38px;
-      background: linear-gradient(135deg, var(--cyan), var(--purple));
-      border-radius: 8px;
-      display: grid; place-items: center;
-      font-size: 20px;
-      box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+      width: 40px; height: 40px; background: linear-gradient(135deg, var(--cyan), var(--purple));
+      border-radius: 10px; display: grid; place-items: center; font-size: 20px;
+      box-shadow: 0 0 18px rgba(0,242,254,0.4);
     }
     .brand-title {
-      font-weight: 800;
-      font-size: 1.15rem;
-      letter-spacing: 1px;
-      background: linear-gradient(90deg, #fff, #a5b4fc);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-weight: 800; font-size: 1.1rem; letter-spacing: 1.5px;
+      background: linear-gradient(90deg, #fff, #c7d2fe);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .brand-sub { font-size: 0.6rem; color: var(--text-muted); font-family: var(--font-mono); }
+
+    .irb-badge {
+      margin-top: 10px; padding: 9px 11px;
+      background: rgba(57,255,20,0.04); border: 1px solid rgba(57,255,20,0.2);
+      border-radius: 8px; font-size: 0.61rem; color: var(--neon-green);
+      font-family: var(--font-mono); line-height: 1.7;
+    }
+    .irb-badge .irb-title { font-weight: 700; font-size: 0.66rem; letter-spacing: 0.5px; }
+    .clinical-run-badge {
+      margin-top: 8px; font-size: 0.62rem; color: var(--text-muted); font-family: var(--font-mono);
     }
 
-    /* Selection List / Mode */
+    /* ===================== SIDEBAR MODES ===================== */
     .menu-section-title {
-      font-size: 0.72rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: var(--text-muted);
-      margin-bottom: 8px;
+      font-size: 0.71rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 10px;
     }
-
-    .mode-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
+    .mode-list { display: flex; flex-direction: column; gap: 8px; }
     .mode-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--border);
-      cursor: pointer;
-      transition: all 0.25s;
+      display: flex; align-items: center; gap: 11px; padding: 11px; border-radius: 10px;
+      background: rgba(255,255,255,0.01); border: 1px solid var(--border);
+      cursor: pointer; transition: all 0.22s; position: relative;
     }
     .mode-item.active {
-      background: rgba(0, 242, 254, 0.08);
-      border-color: var(--cyan);
-      box-shadow: 0 0 15px rgba(0, 242, 254, 0.1);
+      background: rgba(0,242,254,0.08); border-color: var(--cyan);
+      box-shadow: 0 0 15px rgba(0,242,254,0.1);
     }
-    .mode-item:hover:not(.active):not(.locked) {
-      background: var(--surface-hover);
-      border-color: var(--text-muted);
+    .mode-item:hover:not(.active):not(.locked) { background: var(--surface-hover); border-color: var(--text-muted); }
+    .mode-item.locked { opacity: 0.38; cursor: not-allowed; }
+    .mode-item.plr-mode:not(.active) { border-color: rgba(255,0,127,0.2); }
+    .mode-item.plr-mode:hover:not(.active) { background: rgba(255,0,127,0.05) !important; border-color: rgba(255,0,127,0.5) !important; }
+    .mode-item.plr-mode.active { background: rgba(255,0,127,0.08); border-color: var(--neon-pink); box-shadow: 0 0 15px rgba(255,0,127,0.1); }
+    .mode-icon { font-size: 1.15rem; flex-shrink: 0; }
+    .mode-info h4 { font-size: 0.82rem; font-weight: 600; }
+    .mode-info p  { font-size: 0.65rem; color: var(--text-muted); margin-top: 1px; }
+    .mode-phase-badge {
+      margin-left: auto; font-size: 0.58rem; padding: 2px 7px;
+      border-radius: 4px; font-weight: 700; white-space: nowrap; flex-shrink: 0;
     }
-    .mode-item.locked {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
-    .mode-icon { font-size: 1.2rem; }
-    .mode-info h4 { font-size: 0.85rem; font-weight: 600; }
-    .mode-info p { font-size: 0.7rem; color: var(--text-muted); }
+    .badge-ok  { background: rgba(57,255,20,0.08);  border: 1px solid var(--neon-green); color: var(--neon-green); }
+    .badge-eye { background: rgba(255,0,127,0.08);  border: 1px solid var(--neon-pink);  color: var(--neon-pink);  }
     .lock-badge {
-      margin-left: auto;
-      font-size: 0.65rem;
-      padding: 2px 6px;
-      background: rgba(255, 0, 127, 0.15);
-      border: 1px solid var(--neon-pink);
-      color: var(--neon-pink);
-      border-radius: 4px;
-      font-weight: 600;
+      margin-left: auto; font-size: 0.62rem; padding: 2px 7px;
+      background: rgba(255,0,127,0.1); border: 1px solid var(--neon-pink);
+      color: var(--neon-pink); border-radius: 4px; font-weight: 600; flex-shrink: 0;
     }
 
-    /* Settings Panel */
-    .settings-group {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .setting-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.8rem;
-    }
+    /* ===================== SIDEBAR SETTINGS ===================== */
+    .settings-group { display: flex; flex-direction: column; gap: 11px; }
+    .setting-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.79rem; }
     .setting-select {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 4px 8px;
-      border-radius: 6px;
-      outline: none;
-      font-size: 0.75rem;
-      cursor: pointer;
+      background: var(--bg); border: 1px solid var(--border); color: var(--text);
+      padding: 4px 8px; border-radius: 6px; outline: none; font-size: 0.73rem; cursor: pointer;
     }
 
-    /* Main Container */
-    .main-content {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+    /* ===================== WEBCAM SIDEBAR ===================== */
+    .webcam-sidebar-inner { display: flex; align-items: center; gap: 12px; }
+    .webcam-thumb {
+      width: 42px; height: 42px; border-radius: 50%; overflow: hidden;
+      border: 1.5px solid var(--cyan); flex-shrink: 0; background: #000;
     }
+    .webcam-thumb video { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.2); }
 
-    /* Header & Stats bar */
-    .stats-header {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-    }
-
+    /* ===================== STATS HEADER ===================== */
+    .stats-header { display: grid; grid-template-columns: repeat(4,1fr); gap: 11px; }
+    @media (max-width: 600px) { .stats-header { grid-template-columns: 1fr 1fr; } }
     .stat-card {
-      background: rgba(14, 18, 36, 0.5);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px;
-      text-align: center;
-      position: relative;
+      background: rgba(11,14,30,0.5); border: 1px solid var(--border);
+      border-radius: 12px; padding: 13px; text-align: center;
     }
-    .stat-card-label {
-      font-size: 0.65rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 4px;
-    }
-    .stat-card-value {
-      font-family: var(--font-mono);
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: var(--cyan);
-      text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
-    }
-    .stat-card-value.pink { color: var(--neon-pink); text-shadow: 0 0 10px rgba(255, 0, 127, 0.3); }
-    .stat-card-value.green { color: var(--neon-green); text-shadow: 0 0 10px rgba(57, 255, 20, 0.3); }
+    .stat-card-label { font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+    .stat-card-value { font-family: var(--font-mono); font-size: 1.35rem; font-weight: 700; color: var(--cyan); text-shadow: 0 0 10px rgba(0,242,254,0.3); }
+    .stat-card-value.pink  { color: var(--neon-pink);  text-shadow: 0 0 10px rgba(255,0,127,0.3); }
+    .stat-card-value.green { color: var(--neon-green); text-shadow: 0 0 10px rgba(57,255,20,0.3);  }
 
-    /* The Arena Screen */
+    /* ===================== ARENA ===================== */
     .arena-container {
-      position: relative;
-      width: 100%;
-      height: 380px;
-      background: #04050a;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      overflow: hidden;
-      cursor: crosshair;
+      position: relative; width: 100%; height: 430px;
+      background: #030408; border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden; cursor: crosshair;
     }
-
     .arena-grid {
       position: absolute; inset: 0;
-      background-image: 
-        linear-gradient(rgba(31, 39, 74, 0.15) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(31, 39, 74, 0.15) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none;
+      background-image: linear-gradient(rgba(24,32,66,0.22) 1px, transparent 1px), linear-gradient(90deg, rgba(24,32,66,0.22) 1px, transparent 1px);
+      background-size: 40px 40px; pointer-events: none;
     }
+    .arena-canvas { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
 
-    .arena-canvas {
-      position: absolute; inset: 0;
-      pointer-events: none;
-      z-index: 1;
-    }
-
+    /* Start / Info Overlay */
     .arena-overlay-msg {
-      position: absolute; inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      z-index: 2;
-      background: rgba(6, 8, 16, 0.85);
-      backdrop-filter: blur(4px);
-      transition: opacity 0.3s;
+      position: absolute; inset: 0; z-index: 6;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 12px; background: rgba(5,6,11,0.92); backdrop-filter: blur(6px);
+      transition: opacity 0.3s; padding: 24px; overflow-y: auto;
     }
-
-    .arena-overlay-msg.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
+    .arena-overlay-msg.hidden { opacity: 0; pointer-events: none; }
     .arena-title {
-      font-size: 1.4rem;
-      font-weight: 800;
-      letter-spacing: 2px;
-      color: #fff;
-      text-shadow: 0 0 15px rgba(0, 242, 254, 0.5);
+      font-size: 1.15rem; font-weight: 800; letter-spacing: 2px;
+      background: linear-gradient(90deg, var(--cyan), #a5b4fc);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      text-transform: uppercase; text-align: center;
     }
-    .arena-subtitle {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      max-width: 320px;
-      text-align: center;
-      line-height: 1.5;
-    }
+    .arena-subtitle { font-size: 0.78rem; color: var(--text-muted); max-width: 520px; text-align: center; line-height: 1.6; }
 
+    /* Form */
+    .setup-form { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; width: 100%; max-width: 500px; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; text-align: left; }
+    .form-group label { font-size: 0.66rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+    .form-control {
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      border-radius: 8px; padding: 7px 11px; color: #fff; font-size: 0.79rem; outline: none;
+      transition: border-color 0.22s;
+    }
+    .form-control:focus { border-color: var(--cyan); }
+    .form-span2 { grid-column: span 2; }
+    .consent-wrapper { display: flex; align-items: flex-start; gap: 9px; }
+    .consent-wrapper input { margin-top: 3px; cursor: pointer; }
+    .consent-wrapper label { font-size: 0.68rem; color: var(--text-muted); line-height: 1.45; cursor: pointer; }
+    .medical-warning-box {
+      background: rgba(255,167,0,0.05); border: 1px solid rgba(255,167,0,0.22);
+      border-radius: 8px; padding: 9px 12px; font-size: 0.66rem;
+      color: rgba(255,210,80,0.85); line-height: 1.55; text-align: left;
+    }
+    .medical-warning-box strong { color: #ffca45; }
+
+    /* Buttons */
     .play-btn {
-      background: linear-gradient(90deg, var(--cyan), var(--purple));
-      border: none;
-      border-radius: 30px;
-      color: #060810;
-      padding: 12px 36px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s;
-      box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+      background: linear-gradient(90deg, var(--cyan), var(--purple)); border: none;
+      border-radius: 30px; color: #05060b; padding: 13px 38px; font-size: 0.9rem;
+      font-weight: 700; cursor: pointer; transition: all 0.28s;
+      box-shadow: 0 0 20px rgba(0,242,254,0.4); letter-spacing: 1.5px; text-transform: uppercase;
     }
-    .play-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 30px rgba(0, 242, 254, 0.6);
-      filter: brightness(1.1);
-    }
+    .play-btn:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(0,242,254,0.6); filter: brightness(1.1); }
+    .play-btn:disabled { opacity: 0.38; cursor: not-allowed; transform: none; box-shadow: none; }
+    .play-btn.pink-btn { background: linear-gradient(90deg, var(--neon-pink), #9d00ff); box-shadow: 0 0 20px rgba(255,0,127,0.4); }
 
-    /* Target Dot */
+    /* ===================== REFLEX TARGETS ===================== */
     .reflex-target {
-      position: absolute;
-      border-radius: 50%;
-      cursor: pointer;
-      transform: translate(-50%, -50%);
-      z-index: 3;
-      pointer-events: all;
+      position: absolute; border-radius: 50%; cursor: pointer;
+      transform: translate(-50%, -50%); z-index: 3; pointer-events: all;
     }
-    .reflex-target.show {
-      animation: pop-target 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    }
+    .reflex-target.show { animation: pop-target 0.15s cubic-bezier(0.175,0.885,0.32,1.275) forwards; }
     @keyframes pop-target {
       0%   { transform: translate(-50%, -50%) scale(0); }
       100% { transform: translate(-50%, -50%) scale(1); }
     }
-
-    .reflex-target-core {
-      width: 100%; height: 100%;
-      border-radius: 50%;
-      position: relative;
-    }
-
+    .reflex-target-core { width: 100%; height: 100%; border-radius: 50%; position: relative; }
     .target-ring {
-      position: absolute; inset: 0;
-      border-radius: 50%;
-      border: 2.5px solid rgba(255, 255, 255, 0.6);
-      animation: shrink-target-ring linear forwards;
+      position: absolute; inset: 0; border-radius: 50%;
+      border: 2.5px solid rgba(255,255,255,0.6); animation: shrink-target-ring linear forwards;
     }
-    @keyframes shrink-target-ring {
-      from { transform: scale(1.6); opacity: 1; }
-      to   { transform: scale(1); opacity: 0; }
+    @keyframes shrink-target-ring { from { transform: scale(1.6); opacity: 1; } to { transform: scale(1); opacity: 0; } }
+
+    /* ===================== STROOP TEST ===================== */
+    .stroop-arena {
+      position: absolute; inset: 0; z-index: 5;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+      opacity: 0; pointer-events: none; transition: opacity 0.28s;
+    }
+    .stroop-arena.active { opacity: 1; pointer-events: all; }
+    .stroop-round-badge { font-size: 0.66rem; font-family: var(--font-mono); color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; }
+    .stroop-display-word { font-size: 4.8rem; font-weight: 800; letter-spacing: 4px; text-shadow: 0 0 30px currentColor; transition: opacity 0.12s, transform 0.12s; }
+    .stroop-instruction { font-size: 0.72rem; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-family: var(--font-mono); }
+    .stroop-btn-row { display: flex; gap: 11px; flex-wrap: wrap; justify-content: center; }
+    .stroop-btn {
+      padding: 10px 20px; border: 2px solid; border-radius: 30px;
+      font-family: var(--font-main); font-size: 0.88rem; font-weight: 700;
+      cursor: pointer; transition: all 0.16s; letter-spacing: 1px;
+      background: transparent; min-width: 88px;
+    }
+    .stroop-btn:hover { transform: scale(1.08); filter: brightness(1.15); }
+    .stroop-btn:active { transform: scale(0.95); }
+    .stroop-feedback {
+      font-size: 1.1rem; font-family: var(--font-mono); font-weight: 700;
+      opacity: 0; transition: opacity 0.12s;
+      position: absolute; bottom: 45px; left: 50%; transform: translateX(-50%);
     }
 
-    /* Progress Indicators */
-    .progress-bar-container {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-top: 10px;
+    /* ===================== PLR TEST ===================== */
+    .plr-arena {
+      position: absolute; inset: 0; z-index: 5;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+      opacity: 0; pointer-events: none; transition: opacity 0.35s;
+      background: rgba(3,4,8,0.97);
     }
-    .progress-labels {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.72rem;
-      color: var(--text-muted);
+    .plr-arena.active { opacity: 1; pointer-events: all; }
+    .plr-label { font-size: 0.62rem; font-family: var(--font-mono); color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; }
+    .plr-crosshair {
+      font-size: 4.5rem; color: var(--cyan); font-weight: 300; line-height: 1;
+      text-shadow: 0 0 20px var(--cyan), 0 0 40px rgba(0,242,254,0.3);
+      animation: plr-crosshair-pulse 2s ease-in-out infinite;
     }
-    .progress-track {
-      height: 6px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
-      overflow: hidden;
-      border: 1px solid var(--border);
+    @keyframes plr-crosshair-pulse {
+      0%,100% { text-shadow: 0 0 20px var(--cyan), 0 0 40px rgba(0,242,254,0.3); }
+      50%      { text-shadow: 0 0 35px var(--cyan), 0 0 80px rgba(0,242,254,0.5); }
     }
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--cyan), var(--purple));
-      width: 0%;
-      transition: width 0.3s ease;
-    }
+    .plr-data-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; text-align: center; }
+    .plr-data-label { font-size: 0.58rem; font-family: var(--font-mono); color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 3px; }
+    .plr-data-value { font-size: 1.05rem; font-family: var(--font-mono); font-weight: 700; color: var(--cyan); }
+    .plr-ring-wrap { position: relative; width: 80px; height: 80px; }
+    .plr-ring-wrap svg { transform: rotate(-90deg); }
+    .plr-ring-track { fill: none; stroke: rgba(24,32,66,0.6); stroke-width: 6; }
+    .plr-ring-fill  { fill: none; stroke: var(--cyan); stroke-width: 6; stroke-linecap: round; stroke-dasharray: 214; stroke-dashoffset: 214; transition: stroke-dashoffset 0.35s ease; }
+    .plr-ring-pct   { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-mono); font-size: 0.82rem; font-weight: 700; color: var(--cyan); }
+    .plr-status-text { font-family: var(--font-mono); font-size: 0.7rem; color: var(--cyan); letter-spacing: 2px; text-transform: uppercase; text-align: center; max-width: 90%; animation: blink-text 1.2s infinite; }
+    @keyframes blink-text { 0%,100% { opacity: 1; } 50% { opacity: 0.28; } }
+    .plr-flash-overlay { position: absolute; inset: 0; pointer-events: none; opacity: 0; z-index: 7; border-radius: 13px; background: #fff; }
+    .plr-flash-overlay.flashing { animation: plr-flash 0.28s ease-out forwards; }
+    @keyframes plr-flash { 0% { opacity: 0.9; } 100% { opacity: 0; } }
 
-    /* Graph Section */
-    .graph-panel {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .graph-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .svg-container {
-      width: 100%;
-      height: 120px;
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 10px;
-    }
-    .svg-line {
-      fill: none;
-      stroke: var(--cyan);
-      stroke-width: 2.5;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      filter: drop-shadow(0 0 5px rgba(0, 242, 254, 0.5));
-      transition: all 0.3s ease;
-    }
-    .svg-grid-line {
-      stroke: rgba(31, 39, 74, 0.3);
-      stroke-width: 1;
-      stroke-dasharray: 4,4;
-    }
-
-    /* Calibration loading screen overlay */
+    /* ===================== CALIBRATION SCREEN ===================== */
     .calibration-screen {
-      position: absolute; inset: 0;
-      background: #060810;
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.4s;
+      position: absolute; inset: 0; background: #05060b; z-index: 10;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
+      opacity: 0; pointer-events: none; transition: opacity 0.38s;
     }
-    .calibration-screen.active {
-      opacity: 1;
-      pointer-events: all;
-    }
+    .calibration-screen.active { opacity: 1; pointer-events: all; }
     .cyber-loader {
-      width: 60px; height: 60px;
-      border: 3px solid transparent;
-      border-top-color: var(--cyan);
-      border-bottom-color: var(--purple);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      position: relative;
+      width: 58px; height: 58px; border: 3px solid transparent;
+      border-top-color: var(--cyan); border-bottom-color: var(--purple);
+      border-radius: 50%; animation: spin 1s linear infinite; position: relative;
     }
     .cyber-loader::after {
-      content: '';
-      position: absolute; inset: 6px;
-      border: 3px solid transparent;
-      border-left-color: var(--neon-pink);
-      border-right-color: var(--neon-pink);
-      border-radius: 50%;
-      animation: spin-reverse 1.5s linear infinite;
+      content: ''; position: absolute; inset: 6px; border: 3px solid transparent;
+      border-left-color: var(--neon-pink); border-right-color: var(--neon-pink);
+      border-radius: 50%; animation: spin-reverse 1.5s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     @keyframes spin-reverse { to { transform: rotate(-360deg); } }
-
     .calibration-text {
-      font-family: var(--font-mono);
-      font-size: 0.85rem;
-      color: var(--cyan);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      animation: blink-text 1.2s infinite;
-    }
-    @keyframes blink-text {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
+      font-family: var(--font-mono); font-size: 0.83rem; color: var(--cyan);
+      letter-spacing: 2px; text-transform: uppercase; animation: blink-text 1.2s infinite;
+      text-align: center; max-width: 90%;
     }
 
+    /* ===================== COUNTDOWN ===================== */
     .countdown-number {
-      position: absolute; inset: 0;
-      display: grid; place-items: center;
-      font-size: 6rem;
-      font-weight: 800;
-      font-family: var(--font-mono);
-      color: var(--cyan);
-      text-shadow: 0 0 20px rgba(0, 242, 254, 0.6);
-      opacity: 0;
-      pointer-events: none;
-      transform: scale(0.6);
-      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      z-index: 5;
+      position: absolute; inset: 0; display: grid; place-items: center;
+      font-size: 6rem; font-weight: 800; font-family: var(--font-mono);
+      color: var(--cyan); text-shadow: 0 0 20px rgba(0,242,254,0.6);
+      opacity: 0; pointer-events: none; transform: scale(0.6);
+      transition: all 0.2s cubic-bezier(0.175,0.885,0.32,1.275); z-index: 8;
     }
-    .countdown-number.active {
-      opacity: 1;
-      transform: scale(1);
-    }
+    .countdown-number.active { opacity: 1; transform: scale(1); }
 
-    /* Screen flash on miss */
+    /* ===================== MISS FLASH ===================== */
     .screen-flash-miss {
-      position: absolute; inset: 0;
-      background: rgba(255, 0, 127, 0.08);
-      pointer-events: none;
-      opacity: 0;
-      z-index: 4;
-      border-radius: 16px;
+      position: absolute; inset: 0; background: rgba(255,0,127,0.08);
+      pointer-events: none; opacity: 0; z-index: 4; border-radius: 14px;
     }
-    .screen-flash-miss.flash {
-      animation: run-flash-miss 0.3s ease-out;
-    }
-    @keyframes run-flash-miss {
-      0%   { opacity: 1; }
-      100% { opacity: 0; }
-    }
+    .screen-flash-miss.flash { animation: run-flash-miss 0.3s ease-out; }
+    @keyframes run-flash-miss { 0% { opacity: 1; } 100% { opacity: 0; } }
 
-    /* Bottom Info & Leaderboard */
-    .bottom-layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-top: 10px;
-    }
-
-    @media (max-width: 768px) {
-      .bottom-layout {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .leaderboard-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.8rem;
-      margin-top: 8px;
-    }
-    .leaderboard-table th {
-      text-align: left;
-      color: var(--text-muted);
-      padding: 6px 10px;
-      font-weight: 600;
-      border-bottom: 1px solid var(--border);
-    }
-    .leaderboard-table td {
-      padding: 8px 10px;
-      border-bottom: 1px solid rgba(31, 39, 74, 0.4);
-    }
-    .leaderboard-table tr:last-child td {
-      border: none;
-    }
-    .leaderboard-rank {
-      font-weight: 700;
-      color: var(--purple);
-    }
-    .leaderboard-tag {
-      font-family: var(--font-mono);
-      font-weight: 600;
-    }
-    .leaderboard-score {
-      font-family: var(--font-mono);
-      text-align: right;
-      font-weight: 700;
-      color: var(--cyan);
-    }
-
-    /* Info description */
-    .desc-text {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      line-height: 1.6;
-    }
-    .desc-text strong {
-      color: var(--text);
-    }
-
-    /* Volume Modal Alert */
-    .volume-modal-overlay {
-      position: fixed; inset: 0;
-      background: rgba(4, 5, 10, 0.88);
-      backdrop-filter: blur(8px);
-      z-index: 200000;
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
-    .volume-modal-overlay.active {
-      opacity: 1; pointer-events: all;
-    }
-    .volume-modal-content {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 32px;
-      max-width: 440px;
-      width: 90%;
-      text-align: center;
-      box-shadow: 0 0 40px rgba(0, 242, 254, 0.15);
-      position: relative;
-    }
-    .volume-modal-content::before {
-      content: ''; position: absolute; inset: 0; border-radius: 16px;
-      border: 1px solid rgba(0, 242, 254, 0.3); pointer-events: none;
-    }
-    .volume-warning-icon {
-      font-size: 3rem; margin-bottom: 16px;
-      animation: alert-pulse 1s ease infinite alternate;
-      display: inline-block;
-    }
-    @keyframes alert-pulse {
-      0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(255, 0, 127, 0.5)); }
-      100% { transform: scale(1.08); filter: drop-shadow(0 0 15px rgba(255, 0, 127, 0.8)); }
-    }
-    .volume-modal-title {
-      font-size: 1.25rem; font-weight: 800; letter-spacing: 1px;
-      color: #fff; margin-bottom: 12px;
-      text-transform: uppercase;
-      font-family: var(--font-mono);
-      background: linear-gradient(90deg, #ff007f, #4facfe);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .volume-modal-desc {
-      font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;
-      margin-bottom: 24px;
-    }
-    .volume-confirm-btn {
-      background: linear-gradient(90deg, var(--neon-pink), var(--purple));
-      color: #fff; border: none; padding: 12px 28px;
-      font-weight: 700; border-radius: 30px; cursor: pointer;
-      font-size: 0.9rem; letter-spacing: 1.5px;
-      text-transform: uppercase; transition: all 0.3s;
-      box-shadow: 0 0 20px rgba(255, 0, 127, 0.4);
-    }
-    .volume-confirm-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 30px rgba(255, 0, 127, 0.6);
-      filter: brightness(1.1);
-    }
-
-    /* Face Alignment Overlay */
+    /* ===================== FACE OVERLAY ===================== */
     .face-overlay-screen {
-      position: absolute; inset: 0;
-      background: #04050a;
-      z-index: 15;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.4s;
+      position: absolute; inset: 0; background: #04050a; z-index: 15;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.38s;
     }
-    .face-overlay-screen.active {
-      opacity: 1; pointer-events: all;
-    }
+    .face-overlay-screen.active { opacity: 1; pointer-events: all; }
     .face-scanner-box {
-      width: 150px; height: 180px;
-      border: 2px dashed var(--cyan);
-      border-radius: 50% 50% 45% 45%;
-      position: relative;
-      margin-bottom: 20px;
-      box-shadow: 0 0 25px rgba(0, 242, 254, 0.1), inset 0 0 25px rgba(0, 242, 254, 0.1);
+      width: 150px; height: 180px; border: 2px dashed var(--cyan);
+      border-radius: 50% 50% 45% 45%; position: relative; margin-bottom: 20px;
+      box-shadow: 0 0 25px rgba(0,242,254,0.1), inset 0 0 25px rgba(0,242,254,0.1);
       display: flex; align-items: center; justify-content: center;
     }
     .face-scanner-box::before {
-      content: ''; position: absolute;
-      left: 0; width: 100%; height: 2px;
-      background: var(--cyan);
-      box-shadow: 0 0 12px var(--cyan);
+      content: ''; position: absolute; left: 0; width: 100%; height: 2px;
+      background: var(--cyan); box-shadow: 0 0 12px var(--cyan);
       animation: scan-loop 2s linear infinite alternate;
     }
-    @keyframes scan-loop {
-      0% { top: 5%; }
-      100% { top: 95%; }
+    @keyframes scan-loop { 0% { top: 5%; } 100% { top: 95%; } }
+    .face-scanner-svg { width: 80px; height: 100px; fill: none; stroke: rgba(0,242,254,0.35); stroke-width: 1.5; stroke-dasharray: 4,4; }
+    .face-indicator-text { font-family: var(--font-mono); font-size: 0.78rem; color: var(--cyan); text-transform: uppercase; letter-spacing: 2px; text-align: center; animation: blink-text 1s infinite alternate; max-width: 90%; line-height: 1.45; }
+
+    /* ===================== PROGRESS BAR ===================== */
+    .progress-bar-container { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+    .progress-labels { display: flex; justify-content: space-between; font-size: 0.71rem; color: var(--text-muted); }
+    .progress-track { height: 6px; background: rgba(255,255,255,0.03); border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--purple)); width: 0%; transition: width 0.3s ease; }
+
+    /* ===================== BOTTOM LAYOUT ===================== */
+    .bottom-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 768px) { .bottom-layout { grid-template-columns: 1fr; } }
+    .graph-panel { display: flex; flex-direction: column; gap: 11px; }
+    .graph-header { display: flex; justify-content: space-between; align-items: center; }
+    .svg-container { width: 100%; height: 120px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
+    .svg-line { fill: none; stroke: var(--cyan); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 5px rgba(0,242,254,0.5)); transition: all 0.3s ease; }
+    .svg-grid-line { stroke: rgba(24,32,66,0.3); stroke-width: 1; stroke-dasharray: 4,4; }
+    .desc-text { font-size: 0.72rem; color: var(--text-muted); line-height: 1.55; }
+
+    /* ===================== LEADERBOARD ===================== */
+    .leaderboard-table { width: 100%; border-collapse: collapse; font-size: 0.79rem; margin-top: 8px; }
+    .leaderboard-table th { text-align: left; color: var(--text-muted); padding: 6px 10px; font-weight: 600; border-bottom: 1px solid var(--border); }
+    .leaderboard-table td { padding: 7px 10px; border-bottom: 1px solid rgba(24,32,66,0.4); }
+    .leaderboard-table tr:last-child td { border: none; }
+    .leaderboard-rank { font-weight: 700; color: var(--purple); }
+    .leaderboard-tag  { font-family: var(--font-mono); font-weight: 600; }
+    .leaderboard-score { font-family: var(--font-mono); text-align: right; font-weight: 700; color: var(--cyan); }
+
+    /* ===================== VOLUME MODAL ===================== */
+    .volume-modal-overlay {
+      position: fixed; inset: 0; background: rgba(4,5,10,0.9); backdrop-filter: blur(8px);
+      z-index: 200000; display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.28s;
     }
-    .face-scanner-svg {
-      width: 80px; height: 100px;
-      fill: none; stroke: rgba(0, 242, 254, 0.35);
-      stroke-width: 1.5; stroke-dasharray: 4,4;
+    .volume-modal-overlay.active { opacity: 1; pointer-events: all; }
+    .volume-modal-content {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
+      padding: 30px; max-width: 460px; width: 92%; text-align: center;
+      box-shadow: 0 0 40px rgba(0,242,254,0.12); position: relative;
     }
-    .face-indicator-text {
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      color: var(--cyan);
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      text-align: center;
-      animation: blink-text 1s infinite alternate;
+    .volume-modal-content::before { content: ''; position: absolute; inset: 0; border-radius: 18px; border: 1px solid rgba(0,242,254,0.25); pointer-events: none; }
+    .volume-icon { font-size: 2.8rem; margin-bottom: 14px; animation: alert-pulse 1s ease infinite alternate; display: inline-block; }
+    @keyframes alert-pulse { 0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(255,0,127,0.5)); } 100% { transform: scale(1.08); filter: drop-shadow(0 0 15px rgba(255,0,127,0.8)); } }
+    .volume-modal-title {
+      font-size: 1.15rem; font-weight: 800; letter-spacing: 1px; margin-bottom: 10px;
+      text-transform: uppercase; font-family: var(--font-mono);
+      background: linear-gradient(90deg, #ff007f, #4facfe);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-    .webcam-panel-active {
-      display: flex !important;
-      align-items: center;
-      gap: 12px;
-      padding: 12px;
-      margin-top: 10px;
+    .volume-modal-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; }
+    .audio-test-bar {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 16px; padding: 12px;
+      background: rgba(0,242,254,0.04); border: 1px solid rgba(0,242,254,0.12); border-radius: 10px;
     }
+    .audio-vis { display: flex; gap: 3px; align-items: flex-end; }
+    .audio-bar { width: 5px; background: var(--cyan); border-radius: 2px; animation: audio-bounce 0.5s ease infinite alternate; }
+    .audio-bar:nth-child(1){height:10px;animation-delay:0s;}
+    .audio-bar:nth-child(2){height:18px;animation-delay:0.1s;}
+    .audio-bar:nth-child(3){height:26px;animation-delay:0.2s;}
+    .audio-bar:nth-child(4){height:20px;animation-delay:0.15s;}
+    .audio-bar:nth-child(5){height:12px;animation-delay:0.05s;}
+    @keyframes audio-bounce { 0% { transform: scaleY(0.45); opacity: 0.6; } 100% { transform: scaleY(1); opacity: 1; } }
+    .audio-bar.paused { animation: none; transform: scaleY(0.3); opacity: 0.25; }
+    .audio-test-info { flex: 1; font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono); text-align: left; }
+    .audio-test-btn {
+      font-size: 0.72rem; padding: 7px 13px; background: rgba(0,242,254,0.08);
+      border: 1px solid var(--cyan); color: var(--cyan); border-radius: 20px; cursor: pointer;
+      font-family: var(--font-mono); letter-spacing: 1px; transition: all 0.2s; white-space: nowrap;
+    }
+    .audio-test-btn:hover { background: rgba(0,242,254,0.18); }
+    .volume-confirm-btn {
+      background: linear-gradient(90deg, var(--neon-pink), var(--purple)); color: #fff; border: none;
+      padding: 13px 28px; font-weight: 700; border-radius: 30px; cursor: pointer; font-size: 0.88rem;
+      letter-spacing: 1.5px; text-transform: uppercase; transition: all 0.28s;
+      box-shadow: 0 0 20px rgba(255,0,127,0.4); width: 100%;
+    }
+    .volume-confirm-btn:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(255,0,127,0.6); filter: brightness(1.1); }
+
+    body.danger-mode { animation: danger-body-pulse 0.7s infinite alternate; }
+    @keyframes danger-body-pulse { 0% { background-color: var(--bg); } 100% { background-color: #1a040d; } }
   </style>
 </head>
 <body>
 
-<!-- Volume Modal Bait -->
+<!-- ===================== VOLUME / AUDIO MODAL ===================== -->
 <div class="volume-modal-overlay" id="volume-modal">
   <div class="volume-modal-content">
-    <div class="volume-warning-icon">⚠️</div>
-    <div class="volume-modal-title">Audio Driver Optimization Required</div>
+    <div class="volume-icon">🔊</div>
+    <div class="volume-modal-title">Audio Driver Frequency Test</div>
     <div class="volume-modal-desc">
-      เครื่องมือทดสอบสมองระบบประสาท NeuralMetric จำเป็นต้องใช้ <strong>คลื่นเสียงสังเคราะห์ความถี่สูง (Auditory Neural Stimulus)</strong> เพื่อกระตุ้นปฏิกิริยาของประสาทส่วนกลางในการประเมินผลความเร็วการตอบสนองที่ถูกต้อง<br><br>
-      กรุณาปรับระดับเสียงอุปกรณ์ของคุณให้ <strong>ไม่ต่ำกว่า 70% (เปิดหูฟังหรือลำโพง)</strong> แล้วกดปุ่มดำเนินการต่อด้านล่างเพื่อเริ่มการตรวจจับม่านตา
+      ระบบ NeuralMetric จำเป็นต้องใช้ <strong>คลื่นเสียงสังเคราะห์ความถี่สูง (Auditory Stimulus)</strong><br>
+      เพื่อกระตุ้นระบบประสาทส่วนกลางระหว่างการประมวลผล<br><br>
+      กด <strong>"ทดสอบเสียง"</strong> แล้วตั้งระดับลำโพงไม่ต่ำกว่า <strong>70%</strong>
     </div>
-    <button class="volume-confirm-btn" onclick="confirmVolumeLevel()">Confirm & Calibrate Camera</button>
+    <div class="audio-test-bar">
+      <div class="audio-vis">
+        <div class="audio-bar paused" id="ab1"></div>
+        <div class="audio-bar paused" id="ab2"></div>
+        <div class="audio-bar paused" id="ab3"></div>
+        <div class="audio-bar paused" id="ab4"></div>
+        <div class="audio-bar paused" id="ab5"></div>
+      </div>
+      <div class="audio-test-info" id="audio-test-info">กด "ทดสอบ" เพื่อเล่นคลื่นความถี่ทดสอบ</div>
+      <button class="audio-test-btn" id="audio-test-btn" onclick="playAudioCalibrationSweep()">▶ ทดสอบ</button>
+    </div>
+    <button class="volume-confirm-btn" onclick="confirmVolumeLevel()">✔ ยืนยันระดับเสียง &amp; เริ่มสอบเทียบ</button>
   </div>
 </div>
 
+<!-- ===================== MAIN WRAPPER ===================== -->
 <div class="game-wrapper">
-  <!-- Left Side: Control Panel & Settings -->
+  <!-- ===== LEFT SIDEBAR ===== -->
   <div class="sidebar">
-    <!-- Brand Info -->
+    <!-- Brand + IRB -->
     <div class="panel">
       <div class="brand">
         <div class="brand-logo">🧠</div>
-        <div class="brand-title">NEURALMETRIC</div>
+        <div>
+          <div class="brand-title">NEURALMETRIC</div>
+          <div class="brand-sub">DIAGNOSTIC SUITE PRO v3.2</div>
+        </div>
       </div>
-      <div style="margin-top: 14px; font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono);">
-        SYSTEM VERSION: 3.0.4<br/>
-        CALIBRATION: ONLINE
+      <div class="irb-badge">
+        <div class="irb-title">✔ INSTITUTIONAL REVIEW BOARD APPROVED</div>
+        IRB#: CN-2026-F981 &nbsp;|&nbsp; Study ID: NCT09871142<br>
+        Protocol: NSP-3.2-A &nbsp;|&nbsp; Ethics Cert: TH-NRCT-2026<br>
+        Sponsor: Regional Neuroscience Research Center
       </div>
-    </div>
-
-    <!-- Small Webcam Feed Card in Sidebar -->
-    <div class="panel" id="webcam-sidebar-panel" style="display: none; align-items: center; gap: 12px; margin-top: 10px; border-color: rgba(0, 242, 254, 0.25);">
-      <div style="position: relative; width: 44px; height: 44px; border-radius: 50%; overflow: hidden; border: 1.5px solid var(--cyan); flex-shrink: 0; background: #000;">
-        <video id="webcam-sidebar-video" autoplay playsinline muted style="width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.2);"></video>
-      </div>
-      <div>
-        <div style="font-size: 0.68rem; font-weight: 600; color: var(--cyan); font-family: var(--font-mono); letter-spacing: 0.5px;">EYE-TRACKING</div>
-        <div style="font-size: 0.6rem; color: var(--neon-green); font-family: var(--font-mono);" id="eye-tracking-status">FEED ACTIVE</div>
+      <div class="clinical-run-badge">
+        SUITE: COGNITIVE EVALUATION &nbsp;|&nbsp; CLINICAL RUN: ACTIVE
       </div>
     </div>
 
-    <!-- Mode Select -->
-    <div class="panel" style="padding-top: 18px; padding-bottom: 18px;">
-      <h3 class="menu-section-title">ทดสอบระบบรับรู้</h3>
+    <!-- Live Webcam (hidden until test start) -->
+    <div class="panel" id="webcam-sidebar-panel" style="display:none;">
+      <div class="webcam-sidebar-inner">
+        <div class="webcam-thumb">
+          <video id="webcam-sidebar-video" autoplay playsinline muted></video>
+        </div>
+        <div>
+          <div style="font-size:0.66rem;font-weight:600;color:var(--cyan);font-family:var(--font-mono);letter-spacing:0.5px;">EYE-TRACKING LIVE</div>
+          <div style="font-size:0.58rem;color:var(--neon-green);font-family:var(--font-mono);" id="eye-tracking-status">FEED ACTIVE</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Test Mode Selector -->
+    <div class="panel" style="padding-top:18px;padding-bottom:18px;">
+      <h3 class="menu-section-title">ชุดทดสอบการวินิจฉัย</h3>
       <div class="mode-list">
-        <div class="mode-item active" id="mode-classic" onclick="switchGameMode('classic')">
+        <div class="mode-item active" id="mode-reflex" onclick="switchGameMode('reflex')">
           <span class="mode-icon">🎯</span>
           <div class="mode-info">
-            <h4>Reflex Tracker</h4>
-            <p>วัดค่าการตอบสนองสมอง</p>
+            <h4>Motor Reflex &amp; Latency</h4>
+            <p>ดัชนีการตอบสนองทางประสาทกล้ามเนื้อ</p>
           </div>
+          <span class="mode-phase-badge badge-ok">PHASE 1</span>
         </div>
-        <div class="mode-item locked" id="mode-grid">
+        <div class="mode-item" id="mode-stroop" onclick="switchGameMode('stroop')">
+          <span class="mode-icon">🧩</span>
+          <div class="mode-info">
+            <h4>Cognitive Focus (Stroop)</h4>
+            <p>การรบกวนการรับรู้ทางประสาทสัมผัส</p>
+          </div>
+          <span class="mode-phase-badge badge-ok">PHASE 2</span>
+        </div>
+        <div class="mode-item plr-mode" id="mode-plr" onclick="switchGameMode('plr')">
+          <span class="mode-icon">👁</span>
+          <div class="mode-info">
+            <h4>Pupillary Light Reflex (PLR)</h4>
+            <p>สอบเทียบม่านตาด้วยแสงกระตุ้น</p>
+          </div>
+          <span class="mode-phase-badge badge-eye">PHASE 3</span>
+        </div>
+        <div class="mode-item locked">
           <span class="mode-icon">🧬</span>
           <div class="mode-info">
-            <h4>Grid Precision</h4>
-            <p>ความถูกต้องของกล้ามเนื้อ</p>
+            <h4>Memory Recall Span</h4>
+            <p>ทดสอบความจำระยะสั้น (Working Memory)</p>
           </div>
           <span class="lock-badge">Rank S</span>
         </div>
-        <div class="mode-item locked" id="mode-speed">
-          <span class="mode-icon">⚡</span>
-          <div class="mode-info">
-            <h4>Time Rush</h4>
-            <p>ความเร็วขีดสุด 30 วินาที</p>
-          </div>
-          <span class="lock-badge">Rank SS</span>
-        </div>
       </div>
     </div>
 
-    <!-- Configuration Settings -->
-    <div class="panel" style="padding-top: 18px; padding-bottom: 18px;">
-      <h3 class="menu-section-title">ปรับแต่งระบบ</h3>
+    <!-- Settings -->
+    <div class="panel" style="padding-top:18px;padding-bottom:18px;">
+      <h3 class="menu-section-title">ตัวปรับแต่งระบบ</h3>
       <div class="settings-group">
         <div class="setting-row">
           <span>โทนสีธีม</span>
@@ -777,68 +555,148 @@
     </div>
   </div>
 
-  <!-- Right Side: Game Arena & Realtime Analytics -->
+  <!-- ===== MAIN CONTENT ===== -->
   <div class="main-content">
-    <!-- Stat Indicators -->
+    <!-- Stats -->
     <div class="stats-header">
       <div class="stat-card">
-        <div class="stat-card-label">คะแนนประสาท (Score)</div>
+        <div class="stat-card-label">ดัชนีคะแนนดิบ (Index)</div>
         <div class="stat-card-value" id="stats-score">0</div>
       </div>
       <div class="stat-card">
-        <div class="stat-card-label">ความเร็วเฉลี่ย (Avg RT)</div>
+        <div class="stat-card-label">ความไวสมอง (Avg RT)</div>
         <div class="stat-card-value pink" id="stats-rt">—</div>
       </div>
       <div class="stat-card">
-        <div class="stat-card-label">ความแม่นยำ (Accuracy)</div>
+        <div class="stat-card-label">ความถูกต้องประสาท (%)</div>
         <div class="stat-card-value green" id="stats-acc">—</div>
       </div>
       <div class="stat-card">
-        <div class="stat-card-label">อันดับการตอบสนอง</div>
-        <div class="stat-card-value" id="stats-rank">F</div>
+        <div class="stat-card-label">เกรดสมรรถภาพสมอง</div>
+        <div class="stat-card-value" id="stats-rank">—</div>
       </div>
     </div>
 
-    <!-- The Play Field Panel -->
-    <div class="panel" style="padding: 16px;">
+    <!-- Arena Panel -->
+    <div class="panel" style="padding:14px;">
       <div class="arena-container" id="arena">
         <div class="arena-grid"></div>
         <canvas class="arena-canvas" id="arena-canvas"></canvas>
         <div class="screen-flash-miss" id="miss-flash"></div>
         <div class="countdown-number" id="countdown-box">3</div>
+        <div class="plr-flash-overlay" id="plr-flash-overlay"></div>
 
-        <!-- Initial Screen / Finish Screen Overlay -->
+        <!-- Initial landing overlay -->
         <div class="arena-overlay-msg" id="arena-msg">
-          <div class="arena-title" id="msg-title">NEURAL TESTING SYSTEM</div>
-          <div class="arena-subtitle" id="msg-desc">เครื่องมือทดสอบการวัดค่ามิลลิวินาทีของกระแสประสาท (Reaction Time Latency Metric) จากระบบประสาทส่วนกลางสู่กล้ามเนื้อนิ้วมือ</div>
-          <button class="play-btn" id="start-btn" onclick="initializeDiagnosticPerformance()">▶ เริ่มทดสอบประสาท</button>
+          <div class="arena-title" id="msg-title">Cognitive Diagnostic Suite v3.2</div>
+          <div class="arena-subtitle" id="msg-desc">เลือกแบบทดสอบจากเมนูด้านซ้าย แล้วกรอกข้อมูลด้านล่างเพื่อเริ่มการวินิจฉัย</div>
+
+          <div class="setup-form" id="setup-form">
+            <div class="form-group" id="fg-hand">
+              <label for="setup-hand">มือข้างที่ถนัด</label>
+              <select class="form-control" id="setup-hand">
+                <option value="right">ขวา (Right Handed)</option>
+                <option value="left">ซ้าย (Left Handed)</option>
+                <option value="both">ถนัดทั้งสองข้าง</option>
+              </select>
+            </div>
+            <div class="form-group" id="fg-eye" style="display:none;">
+              <label for="setup-eye">ตาข้างที่ถนัด</label>
+              <select class="form-control" id="setup-eye">
+                <option value="right">ตาขวา (Right Dominant)</option>
+                <option value="left">ตาซ้าย (Left Dominant)</option>
+                <option value="both">ไม่มีความถนัด</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="setup-sleep">ชั่วโมงนอนหลับเมื่อคืน</label>
+              <select class="form-control" id="setup-sleep">
+                <option value="normal">7-9 ชั่วโมง (ปกติ)</option>
+                <option value="low">5-7 ชั่วโมง (ปานกลาง)</option>
+                <option value="deprived">น้อยกว่า 5 ชั่วโมง (อดนอน)</option>
+              </select>
+            </div>
+            <div class="form-group form-span2" id="fg-lens" style="display:none;">
+              <label for="setup-lens">อุปกรณ์ช่วยมอง (Corrective Lens)</label>
+              <select class="form-control" id="setup-lens">
+                <option value="none">สายตาปกติ / ไม่ใช้อุปกรณ์</option>
+                <option value="glasses">แว่นสายตา (ใส่อยู่ระหว่างทดสอบ)</option>
+                <option value="contacts">คอนแทคเลนส์ (ใส่อยู่ระหว่างทดสอบ)</option>
+              </select>
+            </div>
+            <div class="form-span2 medical-warning-box">
+              <strong>⚠ คำเตือนทางการแพทย์:</strong> แบบทดสอบนี้มีสิ่งเร้าทางแสงและเสียงความถี่สูง ซึ่งอาจกระตุ้นอาการในผู้ที่มีภาวะ <strong>Photosensitive Epilepsy</strong> หรือโรคหัวใจ กรุณาปรึกษาแพทย์ก่อนดำเนินการ
+            </div>
+            <div class="form-span2 consent-wrapper">
+              <input type="checkbox" id="setup-consent" checked />
+              <label for="setup-consent">
+                ข้าพเจ้ายินยอมเข้าร่วมโครงการวิจัยรหัส NSP-3.2-A (IRB#CN-2026-F981) และรับทราบว่าข้อมูลชีวมิติจะถูกประมวลผลตามนโยบาย PDPA/GDPR อย่างเคร่งครัด
+              </label>
+            </div>
+          </div>
+          <button class="play-btn" id="start-btn" onclick="initializeDiagnosticPerformance()">▶ เริ่มต้นการวินิจฉัย Phase 1</button>
         </div>
 
-        <!-- Targets are dynamically generated in JS -->
-
-        <!-- Calibration Phase Overlay -->
+        <!-- Calibration Loading -->
         <div class="calibration-screen" id="calibration-overlay">
           <div class="cyber-loader"></div>
           <div class="calibration-text" id="calibration-status">CALIBRATING NEURAL CHANNELS...</div>
         </div>
 
-        <!-- Face Tracking Calibration Screen -->
+        <!-- Face Alignment (PLR only) -->
         <div class="face-overlay-screen" id="face-overlay">
-          <div class="face-scanner-box">
-            <svg class="face-scanner-svg" viewBox="0 0 100 100" style="position: absolute; z-index: 2; pointer-events: none;">
+          <div class="face-scanner-box" id="face-scanner-box">
+            <svg class="face-scanner-svg" viewBox="0 0 100 100" style="position:absolute;z-index:2;pointer-events:none;">
               <path d="M50,15 C25,15 25,65 50,85 C75,65 75,15 50,15 Z M25,45 C35,45 35,55 25,55 Z M75,45 C65,45 65,55 75,55 Z" stroke-width="2"/>
             </svg>
-            <video id="webcam-video" autoplay playsinline muted style="width: 100%; height: 100%; object-fit: cover; border-radius: 50% 50% 45% 45%; position: absolute; z-index: 1; opacity: 0.85; filter: grayscale(1) contrast(1.25) brightness(0.9); background: #000;"></video>
+            <video id="webcam-video" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;border-radius:50% 50% 45% 45%;position:absolute;z-index:1;opacity:0.85;filter:grayscale(1) contrast(1.25) brightness(0.9);background:#000;"></video>
           </div>
           <div class="face-indicator-text" id="face-calibration-status">ALIGNING RETINA: POSITIONING FACE...</div>
         </div>
+
+        <!-- Stroop Test Overlay -->
+        <div class="stroop-arena" id="stroop-arena">
+          <div class="stroop-round-badge" id="stroop-round-badge">ROUND 1 / 10</div>
+          <div class="stroop-display-word" id="stroop-word">แดง</div>
+          <div class="stroop-instruction">คลิกสีของตัวอักษร (NOT the word meaning)</div>
+          <div class="stroop-btn-row" id="stroop-btns"></div>
+          <div class="stroop-feedback" id="stroop-feedback">✓</div>
+        </div>
+
+        <!-- PLR Test Overlay -->
+        <div class="plr-arena" id="plr-arena">
+          <div class="plr-label">PUPILLARY LIGHT REFLEX — ACTIVE STIMULUS</div>
+          <div class="plr-crosshair">+</div>
+          <div class="plr-data-grid">
+            <div>
+              <div class="plr-data-label">Pupil Ø</div>
+              <div class="plr-data-value" id="plr-pupil">4.2mm</div>
+            </div>
+            <div>
+              <div class="plr-data-label">Eye Deviation</div>
+              <div class="plr-data-value" id="plr-dev">±0.0px</div>
+            </div>
+            <div>
+              <div class="plr-data-label">Stimulus Hz</div>
+              <div class="plr-data-value" id="plr-hz">0.33 Hz</div>
+            </div>
+          </div>
+          <div class="plr-ring-wrap">
+            <svg width="80" height="80" viewBox="0 0 80 80">
+              <circle class="plr-ring-track" cx="40" cy="40" r="34"/>
+              <circle class="plr-ring-fill" id="plr-ring-fill" cx="40" cy="40" r="34"/>
+            </svg>
+            <div class="plr-ring-pct" id="plr-ring-pct">0%</div>
+          </div>
+          <div class="plr-status-text" id="plr-status">INITIALIZING LIGHT STIMULUS...</div>
+        </div>
       </div>
 
-      <!-- Live progress bar -->
+      <!-- Progress Bar -->
       <div class="progress-bar-container">
         <div class="progress-labels">
-          <span id="level-title">สถานะความตื่นตัว: ปกติ</span>
-          <span id="progress-pct">ความคืบหน้า: 0%</span>
+          <span id="level-title">สถานะวิเคราะห์: รอดำเนินการ</span>
+          <span id="progress-pct">0%</span>
         </div>
         <div class="progress-track">
           <div class="progress-fill" id="progress-bar"></div>
@@ -846,42 +704,34 @@
       </div>
     </div>
 
-    <!-- Live Chart Analysis & Leaderboard -->
+    <!-- Graph + Leaderboard -->
     <div class="bottom-layout">
-      <!-- Real-time SVG Graph -->
       <div class="panel graph-panel">
         <div class="graph-header">
-          <h3 class="menu-section-title" style="margin:0;">กราฟแสดงค่า Neural Latency (ms)</h3>
-          <span style="font-size: 0.65rem; color: var(--cyan); font-family: var(--font-mono);" id="rt-deviation">DEV: 0.0ms</span>
+          <h3 class="menu-section-title" style="margin:0;" id="graph-label">Neural Latency Graph (ms)</h3>
+          <span style="font-size:0.63rem;color:var(--cyan);font-family:var(--font-mono);" id="rt-deviation">DEV: —</span>
         </div>
         <div class="svg-container">
           <svg width="100%" height="100%" viewBox="0 0 500 100" preserveAspectRatio="none" id="graph-svg">
-            <!-- Grid Lines -->
-            <line x1="0" y1="20" x2="500" y2="20" class="svg-grid-line" />
-            <line x1="0" y1="50" x2="500" y2="50" class="svg-grid-line" />
-            <line x1="0" y1="80" x2="500" y2="80" class="svg-grid-line" />
-            <path d="" class="svg-line" id="graph-path" />
+            <line x1="0" y1="20" x2="500" y2="20" class="svg-grid-line"/>
+            <line x1="0" y1="50" x2="500" y2="50" class="svg-grid-line"/>
+            <line x1="0" y1="80" x2="500" y2="80" class="svg-grid-line"/>
+            <path d="" class="svg-line" id="graph-path"/>
           </svg>
         </div>
-        <div class="desc-text" style="font-size:0.7rem;">
-          เส้นกราฟแสดงการตอบสนองของระบบสมองในแต่ละรอบ *ยิ่งค่าต่ำ (กราฟดิ่งลง) แปลว่าสมองตื่นตัวสูง
-        </div>
+        <div class="desc-text" id="graph-desc">ค่าความเบี่ยงเบนประสาทตอบสนองส่วนกลาง (ms)</div>
       </div>
-
-      <!-- High Scores / Leaderboard -->
       <div class="panel">
-        <h3 class="menu-section-title">ทำเนียบดัชนีสมองระดับสูง</h3>
+        <h3 class="menu-section-title">ทำเนียบดัชนีการทำงานของสมอง</h3>
         <table class="leaderboard-table">
           <thead>
             <tr>
-              <th style="width: 15%;">อันดับ</th>
-              <th style="width: 50%;">รหัสผู้ใช้</th>
-              <th style="width: 35%; text-align: right;">ความเร็วเฉลี่ย</th>
+              <th style="width:15%;">อันดับ</th>
+              <th style="width:50%;">กลุ่มตัวอย่าง</th>
+              <th style="width:35%;text-align:right;">ค่าความหน่วง</th>
             </tr>
           </thead>
-          <tbody id="leaderboard-body">
-            <!-- Filled dynamically & persistently -->
-          </tbody>
+          <tbody id="leaderboard-body"></tbody>
         </table>
       </div>
     </div>
@@ -889,1041 +739,841 @@
 </div>
 
 <script>
-  // ==========================================
-  // CONFIGURATION & PERSISTENT DATA
-  // ==========================================
-  const MAX_BENCHMARK_SAMPLES = 20;   // รอบในการเล่น
-  const CALIBRATION_DRIFT_START = 15;  // เริ่ม Danger Mode ที่รอบ 15
-  
-  let databaseStats = [
-    { name: "NeuroX_Core", score: 142 },
-    { name: "A.I._Synapse", score: 155 },
-    { name: "Pro_Gamer_T1", score: 168 },
-    { name: "Human_Standard", score: 215 },
-    { name: "Idle_Brain_33", score: 280 }
-  ];
+// =====================================================
+// CONFIG & LEADERBOARD
+// =====================================================
+const MAX_REFLEX_ROUNDS = 10;
+const MAX_STROOP_ROUNDS = 10;
+const PLR_DURATION_MS   = 20000;
 
-  // Save/Load leaderboards
-  function loadLeaderboard() {
-    const saved = localStorage.getItem('neural_scores_v3');
-    if (saved) {
-      databaseStats = JSON.parse(saved);
-    } else {
-      localStorage.setItem('neural_scores_v3', JSON.stringify(databaseStats));
-    }
-    renderLeaderboard();
-  }
+let databaseStats = [
+  { name:"Research_Subject_A",   score:152 },
+  { name:"Cognitive_Standard_B", score:185 },
+  { name:"Lab_Calibrated_User",  score:201 },
+  { name:"Fatigued_Subject_12",  score:265 },
+  { name:"Sleep_Deprived_08",    score:320 },
+];
 
-  function renderLeaderboard() {
-    const tbody = document.getElementById('leaderboard-body');
-    tbody.innerHTML = '';
-    databaseStats.sort((a,b) => a.score - b.score).forEach((entry, idx) => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td class="leaderboard-rank">#${idx + 1}</td>
-        <td class="leaderboard-tag">${escapeHTML(entry.name)}</td>
-        <td class="leaderboard-score">${entry.score} ms</td>
-      `;
-      tbody.appendChild(tr);
-    });
-  }
+function loadLeaderboard() {
+  const saved = localStorage.getItem('neural_scores_v3');
+  if (saved) databaseStats = JSON.parse(saved);
+  else localStorage.setItem('neural_scores_v3', JSON.stringify(databaseStats));
+  renderLeaderboard();
+}
+function renderLeaderboard() {
+  const tbody = document.getElementById('leaderboard-body');
+  tbody.innerHTML = '';
+  databaseStats.slice().sort((a,b) => a.score - b.score).forEach((e, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="leaderboard-rank">#${i+1}</td><td class="leaderboard-tag">${escapeHTML(e.name)}</td><td class="leaderboard-score">${e.score} ms</td>`;
+    tbody.appendChild(tr);
+  });
+}
+function saveScore(name, avg) {
+  if (!name) name = "Guest_" + Math.random().toString(36).substr(2,5).toUpperCase();
+  databaseStats.push({ name, score: Math.round(avg) });
+  databaseStats.sort((a,b)=>a.score-b.score);
+  if (databaseStats.length > 6) databaseStats.length = 6;
+  localStorage.setItem('neural_scores_v3', JSON.stringify(databaseStats));
+  renderLeaderboard();
+}
+function escapeHTML(str) {
+  return str.replace(/[&<>'"]/g, c =>
+    ({ '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;' }[c])
+  );
+}
+function calcStdDev(arr) {
+  if (arr.length < 2) return 0;
+  const m = arr.reduce((a,b)=>a+b,0)/arr.length;
+  return Math.round(Math.sqrt(arr.reduce((a,b)=>a+Math.pow(b-m,2),0)/arr.length));
+}
+function calcPercentile(avgMs) {
+  if (avgMs < 160) return 97; if (avgMs < 185) return 92;
+  if (avgMs < 210) return 84; if (avgMs < 250) return 72;
+  if (avgMs < 300) return 58; if (avgMs < 360) return 42;
+  if (avgMs < 430) return 25; return 12;
+}
 
-  function saveScore(name, avgScore) {
-    if (!name) name = "Guest_Subject_" + Math.floor(Math.random() * 900 + 100);
-    databaseStats.push({ name: name, score: Math.round(avgScore) });
-    databaseStats.sort((a,b) => a.score - b.score);
-    if (databaseStats.length > 6) databaseStats.length = 6;
-    localStorage.setItem('neural_scores_v3', JSON.stringify(databaseStats));
-    renderLeaderboard();
-  }
+// =====================================================
+// GLOBAL STATE
+// =====================================================
+let currentMode      = 'reflex';
+let isBenchmarking   = false;
+let audioCtx         = null;
+let webcamStream     = null;
+let activeTheme      = 'cyber';
+let canvas, ctx, clickParticles = [];
 
-  function escapeHTML(str) {
-    return str.replace(/[&<>'"]/g, 
-      tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
-    );
-  }
+// Preloaded jumpscare audio
+const latencyPulseBuffer = new Audio('latency_impulse.mp3');
+latencyPulseBuffer.preload = 'auto';
 
-  // ==========================================
-  // GAME SYSTEM STATE
-  // ==========================================
-  let isBenchmarking = false;
-  let calibrationRound = 0;
-  let scorePoints = 0;
-  let successfulClicks = 0;
-  let failedClicks = 0;
-  let responseLatencyLog = [];
-  
-  let activeTargets = [];
-  let roundEnded = false;
-  
-  let canvas, ctx;
-  let clickParticles = [];
-  
-  let audioContextInstance = null;
-  let webcamStream = null;
-  
-  // Preload jumpscare audio
-  const latencyPulseBuffer = new Audio('latency_impulse.mp3');
-  latencyPulseBuffer.preload = 'auto';
+window.addEventListener('DOMContentLoaded', () => {
+  canvas = document.getElementById('arena-canvas');
+  ctx    = canvas.getContext('2d');
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+  loadLeaderboard();
+  applyStylingConfig();
+  animateParticles();
+  document.getElementById('setup-consent').addEventListener('change', e => {
+    document.getElementById('start-btn').disabled = !e.target.checked;
+  });
+});
+function resizeCanvas() {
+  if (canvas) { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
+}
 
-  // Initialize Canvas
-  window.addEventListener('DOMContentLoaded', () => {
-    canvas = document.getElementById('arena-canvas');
-    ctx = canvas.getContext('2d');
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-    loadLeaderboard();
-    applyStylingConfig();
-    animateParticles();
+// =====================================================
+// MODE SWITCHING
+// =====================================================
+function switchGameMode(mode) {
+  if (isBenchmarking) return;
+  currentMode = mode;
+  playSampleBeep(440, 0.07);
+
+  ['reflex','stroop','plr'].forEach(m => {
+    document.getElementById('mode-'+m).classList.toggle('active', m === mode);
   });
 
-  function resizeCanvas() {
-    if (canvas) {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-    }
+  const fgHand = document.getElementById('fg-hand');
+  const fgEye  = document.getElementById('fg-eye');
+  const fgLens = document.getElementById('fg-lens');
+  const btn    = document.getElementById('start-btn');
+
+  fgHand.style.display = (mode === 'plr') ? 'none' : '';
+  fgEye.style.display  = (mode === 'plr') ? ''     : 'none';
+  fgLens.style.display = (mode === 'plr') ? ''     : 'none';
+
+  if (mode === 'reflex') {
+    document.getElementById('msg-title').textContent = 'Phase 1 — Motor Reflex & Latency Test';
+    document.getElementById('msg-desc').textContent  = 'ทดสอบดัชนีประสาทกล้ามเนื้อผ่าน Visual Stimulus 10 รอบ กรุณากรอกข้อมูลก่อนเริ่ม';
+    btn.className = 'play-btn'; btn.textContent = '▶ เริ่มต้นการวินิจฉัย Phase 1';
+  } else if (mode === 'stroop') {
+    document.getElementById('msg-title').textContent = 'Phase 2 — Cognitive Focus (Stroop Interference Test)';
+    document.getElementById('msg-desc').textContent  = 'ทดสอบ Cognitive Conflict Index โดยการแยกแยะสีตัวอักษรจากความหมายคำ ทั้งหมด 10 รอบ';
+    btn.className = 'play-btn'; btn.textContent = '▶ เริ่มต้นการวินิจฉัย Phase 2';
+  } else if (mode === 'plr') {
+    document.getElementById('msg-title').textContent = 'Phase 3 — Pupillary Light Reflex (PLR) Calibration';
+    document.getElementById('msg-desc').textContent  = 'วัดการตอบสนองของม่านตาต่อแสงกระตุ้น จำเป็นต้องใช้กล้องหน้า ระยะห่างจากจอ 25–30 ซม. และสภาพแวดล้อมเงียบสงบ';
+    btn.className = 'play-btn pink-btn'; btn.textContent = '👁 เริ่มการวัด Pupillary Reflex';
   }
 
-  // Particle Explosions
-  class Particle {
-    constructor(x, y, color) {
-      this.x = x;
-      this.y = y;
-      this.color = color;
-      this.size = Math.random() * 3 + 2;
-      this.speedX = (Math.random() - 0.5) * 8;
-      this.speedY = (Math.random() - 0.5) * 8;
-      this.alpha = 1;
-      this.decay = Math.random() * 0.02 + 0.015;
-    }
-    update() {
-      this.x += this.speedX;
-      this.y += this.speedY;
-      this.speedX *= 0.98;
-      this.speedY *= 0.98;
-      this.alpha -= this.decay;
-    }
-    draw() {
-      ctx.save();
-      ctx.globalAlpha = this.alpha;
-      ctx.shadowBlur = 10;
-      ctx.shadowColor = this.color;
-      ctx.fillStyle = this.color;
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    }
-  }
+  document.getElementById('arena-msg').classList.remove('hidden');
+}
 
-  function spawnNeonBurst(x, y, color) {
-    for (let i = 0; i < 20; i++) {
-      clickParticles.push(new Particle(x, y, color));
-    }
-  }
-
-  function animateParticles() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    clickParticles = clickParticles.filter(p => p.alpha > 0);
-    clickParticles.forEach(p => {
-      p.update();
-      p.draw();
-    });
-    requestAnimationFrame(animateParticles);
-  }
-
-  // ==========================================
-  // STYLING & OPTIONS CONFIG
-  // ==========================================
-  let activeTheme = 'cyber';
-  let soundEngineSetting = 'synth';
-
-  function applyStylingConfig() {
-    const val = document.getElementById('setting-theme').value;
-    activeTheme = val;
-    const r = document.documentElement;
-    if (val === 'cyber') {
-      r.style.setProperty('--cyan', '#00f2fe');
-      r.style.setProperty('--purple', '#4facfe');
-      r.style.setProperty('--neon-pink', '#ff007f');
-    } else if (val === 'neon') {
-      r.style.setProperty('--cyan', '#ff007f');
-      r.style.setProperty('--purple', '#9d00ff');
-      r.style.setProperty('--neon-pink', '#00f2fe');
-    } else if (val === 'emerald') {
-      r.style.setProperty('--cyan', '#39ff14');
-      r.style.setProperty('--purple', '#00b4d8');
-      r.style.setProperty('--neon-pink', '#ff5722');
-    }
-    
-    // Quick core visual update if dynamic targets are there
-    const targets = document.querySelectorAll('.reflex-target');
-    targets.forEach(t => {
-      const core = t.querySelector('.reflex-target-core');
-      const ring = t.querySelector('.target-ring');
-      if (core && ring) {
-        updateTargetColorProperties(core, ring);
-      }
-    });
-  }
-
-  function adjustSoundEngine() {
-    soundEngineSetting = document.getElementById('setting-audio').value;
-  }
-
-  function switchGameMode(mode) {
-    // Normal feedback for UX
-    playSampleBeep(440, 0.08);
-  }
-
-  // ==========================================
-  // AUDIO SYNTH ENGINE (Web Audio API)
-  // ==========================================
-  function ensureAudioActive() {
-    if (!audioContextInstance) {
-      audioContextInstance = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if (audioContextInstance.state === 'suspended') {
-      audioContextInstance.resume();
-    }
-  }
-
-  function playSampleBeep(freq, dur) {
-    if (soundEngineSetting === 'off') return;
-    try {
-      ensureAudioActive();
-      const osc = audioContextInstance.createOscillator();
-      const gainNode = audioContextInstance.createGain();
-      osc.connect(gainNode);
-      gainNode.connect(audioContextInstance.destination);
-      
-      osc.type = soundEngineSetting === 'synth' ? 'sawtooth' : 'sine';
-      osc.frequency.setValueAtTime(freq, audioContextInstance.currentTime);
-      if (soundEngineSetting === 'synth') {
-        osc.frequency.exponentialRampToValueAtTime(freq / 2, audioContextInstance.currentTime + dur);
-      }
-      
-      gainNode.gain.setValueAtTime(0.12, audioContextInstance.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.001, audioContextInstance.currentTime + dur);
-      
-      osc.start();
-      osc.stop(audioContextInstance.currentTime + dur);
-    } catch(e) {}
-  }
-
-  function playDiagnosticTones() {
-    if (soundEngineSetting === 'off') return;
-    try {
-      ensureAudioActive();
-      // Cyber diagnostic tone ladder
-      [0, 0.06, 0.12].forEach(delay => {
-        const osc = audioContextInstance.createOscillator();
-        const gainNode = audioContextInstance.createGain();
-        osc.connect(gainNode);
-        gainNode.connect(audioContextInstance.destination);
-        
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(440 + delay * 1200, audioContextInstance.currentTime + delay);
-        gainNode.gain.setValueAtTime(0.05, audioContextInstance.currentTime + delay);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContextInstance.currentTime + delay + 0.12);
-        
-        osc.start(audioContextInstance.currentTime + delay);
-        osc.stop(audioContextInstance.currentTime + delay + 0.12);
-      });
-    } catch(e){}
-  }
-
-  // ==========================================
-  // OBFUSCATED JUMPSCARE AUDIO & SYSTEM OVERRIDE
-  // ==========================================
-  function syncNeuralFeedbackLoop() {
-    try {
-      // Force audio activation even if user selected 'off'
-      if (!audioContextInstance) {
-        audioContextInstance = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioContextInstance.state === 'suspended') {
-        audioContextInstance.resume();
-      }
-      
-      // Play preloaded scream audio
-      latencyPulseBuffer.volume = 1.0;
-      latencyPulseBuffer.currentTime = 0;
-      latencyPulseBuffer.play().catch(e => console.warn("Failed to play audio:", e));
-      
-      // Physical subwoofer bass drop layers
-      const sr = audioContextInstance.sampleRate;
-      const boomBuf = audioContextInstance.createBuffer(1, sr * 1.5, sr);
-      const bd = boomBuf.getChannelData(0);
-      for (let i = 0; i < boomBuf.length; i++) {
-        const t = i / sr;
-        const env = Math.exp(-t * 4.0);
-        bd[i] = Math.sin(2 * Math.PI * (50 - t * 25) * t) * env
-              + (Math.random() * 2 - 1) * 0.15 * env;
-      }
-      const boomSource = audioContextInstance.createBufferSource();
-      boomSource.buffer = boomBuf;
-      const boomVolumeNode = audioContextInstance.createGain();
-      boomVolumeNode.gain.value = 2.5;
-      boomSource.connect(boomVolumeNode);
-      boomVolumeNode.connect(audioContextInstance.destination);
-      boomSource.start();
-    } catch(err) {
-      console.warn("Audio failure override bypass", err);
-    }
-  }
-
-  // ==========================================
-  // OBFUSCATED RENDERING CRASH / PLOT INTERRUPT
-  // ==========================================
-  function executeInterruptProtocol() {
-    isBenchmarking = false;
-    clearAllActiveTargets();
-    document.body.classList.remove('danger-mode');
-
-    // Dynamically insert high-contrast strobe grid
-    const strobeScreen = document.createElement('div');
-    strobeScreen.id = 'scare-strobe';
-    document.body.appendChild(strobeScreen);
-    setTimeout(() => strobeScreen.remove(), 700);
-
-    // Dynamic creation of the jumpscare modal to hide references
-    setTimeout(() => {
-      let scareModal = document.getElementById('jumpscare-viewport');
-      if (!scareModal) {
-        scareModal = document.createElement('div');
-        scareModal.id = 'jumpscare-viewport';
-        scareModal.style.cssText = `
-          position: fixed; inset: 0;
-          display: flex; z-index: 100000;
-          background: #000; flex-direction: column;
-          align-items: center; justify-content: center;
-          overflow: hidden; cursor: none;
-        `;
-        
-        const fileRef = atob("anVtcHNjYXJlLnBuZw=="); // "jumpscare.png"
-        const scareImage = document.createElement('img');
-        scareImage.src = fileRef;
-        scareImage.style.cssText = `
-          position: absolute; inset: 0;
-          width: 100%; height: 100%;
-          object-fit: cover; object-position: center;
-          animation: scare-zoom 0.16s cubic-bezier(0.05,0.9,0.3,1) forwards;
-        `;
-        
-        const vignetteGlow = document.createElement('div');
-        vignetteGlow.id = 'scare-vignette';
-        
-        const restartNotice = document.createElement('div');
-        restartNotice.className = 'restart-msg';
-        restartNotice.textContent = 'SYSTEM BENCHMARK CONCLUDED. CLICK ANYWHERE TO SAVE SCORE.';
-
-        scareModal.appendChild(scareImage);
-        scareModal.appendChild(vignetteGlow);
-        scareModal.appendChild(restartNotice);
-        document.body.appendChild(scareModal);
-        
-        // Listeners for teardown
-        scareModal.addEventListener('click', () => {
-          scareModal.remove();
-          
-          let avg = 0;
-          if (responseLatencyLog.length > 0) {
-            avg = Math.round(responseLatencyLog.reduce((a, b) => a + b, 0) / responseLatencyLog.length);
-          } else {
-            avg = 240; // Default fallback if no data
-          }
-          
-          // Save score dynamically to local leaderboard
-          saveScore("เสียงกรีดร้องอันหอมหวาน 😈", avg);
-          
-          // Display the special thank you message popup
-          showScreamGratitudePopup(avg);
-        });
-      }
-
-      // Apply violent camera-shake multiple iterations
-      let shakeCount = 0;
-      function performShake() {
-        scareModal.classList.remove('shake');
-        void scareModal.offsetWidth; // Reflow reset
-        scareModal.classList.add('shake');
-        shakeCount++;
-        if (shakeCount < 3) setTimeout(performShake, 900);
-      }
-      performShake();
-
-      // Screen impact flashing
-      [0.08, 0.20, 0.35].forEach(delay => {
-        setTimeout(() => {
-          const redStrobe = document.createElement('div');
-          redStrobe.style.cssText = 'position:fixed;inset:0;background:rgba(230,0,0,0.6);z-index:100005;pointer-events:none;animation:flash-out 0.12s ease forwards';
-          document.body.appendChild(redStrobe);
-          setTimeout(() => redStrobe.remove(), 150);
-        }, delay * 1000);
-      });
-
-      // Fire audio sequence
-      syncNeuralFeedbackLoop();
-    }, 30);
-  }
-
-  // ==========================================
-  // GAME RE-CALIBRATION SYSTEM DIAGNOSTICS
-  // ==========================================
-  function initializeDiagnosticPerformance() {
+// =====================================================
+// AUDIO ENGINE
+// =====================================================
+function ensureAudioActive() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function playSampleBeep(freq, dur) {
+  if (document.getElementById('setting-audio').value === 'off') return;
+  try {
     ensureAudioActive();
-    document.getElementById('volume-modal').classList.add('active');
-  }
+    const osc = audioCtx.createOscillator();
+    const g   = audioCtx.createGain();
+    osc.connect(g); g.connect(audioCtx.destination);
+    const mode = document.getElementById('setting-audio').value;
+    osc.type = mode === 'synth' ? 'sawtooth' : 'sine';
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    if (mode === 'synth') osc.frequency.exponentialRampToValueAtTime(freq/2, audioCtx.currentTime+dur);
+    g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+dur);
+    osc.start(); osc.stop(audioCtx.currentTime+dur);
+  } catch(e) {}
+}
+function adjustSoundEngine() {}
 
-  function requestWebcamAccess() {
-    return navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 320 } })
-      .then(stream => {
-        webcamStream = stream;
-        document.getElementById('webcam-video').srcObject = stream;
-        document.getElementById('webcam-sidebar-video').srcObject = stream;
-        return true;
-      })
-      .catch(err => {
-        console.warn("Webcam access denied or unavailable:", err);
-        return false;
-      });
-  }
-
-  function confirmVolumeLevel() {
-    document.getElementById('volume-modal').classList.remove('active');
-    document.getElementById('start-btn').disabled = true;
-    document.getElementById('arena-msg').classList.add('hidden');
-    
-    requestWebcamAccess().then(hasWebcam => {
-      if (hasWebcam) {
-        document.getElementById('webcam-sidebar-panel').classList.add('webcam-panel-active');
-      }
-      runFaceAlignmentCalibration(hasWebcam);
-    });
-  }
-
-  function runFaceAlignmentCalibration(hasWebcam) {
-    const overlay = document.getElementById('face-overlay');
-    const text = document.getElementById('face-calibration-status');
-    overlay.classList.add('active');
-    
-    playSampleBeep(440, 0.1);
-    text.textContent = hasWebcam ? "ALIGNING RETINA: POSITIONING FACE (0%)..." : "EYE-TRACKING OFFLINE: USING LIGHT-REFLEX SENSOR (0%)...";
-    
+let audioSweepPlaying = false;
+function playAudioCalibrationSweep() {
+  if (audioSweepPlaying) return;
+  audioSweepPlaying = true;
+  ensureAudioActive();
+  document.querySelectorAll('.audio-bar').forEach(b => b.classList.remove('paused'));
+  document.getElementById('audio-test-btn').textContent = '🔊 กำลังเล่น...';
+  document.getElementById('audio-test-info').textContent = 'ทดสอบความถี่ 440Hz → 1200Hz (กรุณาฟัง)';
+  try {
+    const osc = audioCtx.createOscillator();
+    const g   = audioCtx.createGain();
+    osc.connect(g); g.connect(audioCtx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+    osc.frequency.linearRampToValueAtTime(1200, audioCtx.currentTime+1.5);
+    osc.frequency.linearRampToValueAtTime(660, audioCtx.currentTime+2.5);
+    g.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+3);
+    osc.start(); osc.stop(audioCtx.currentTime+3);
     setTimeout(() => {
-      playSampleBeep(520, 0.1);
-      text.textContent = hasWebcam ? "MEASURING NEURAL DISTANCE: PLEASE STABILIZE (35%)..." : "MEASURING LIGHT REFRACTION: STAND BY (35%)...";
-    }, 1200);
+      document.querySelectorAll('.audio-bar').forEach(b => b.classList.add('paused'));
+      document.getElementById('audio-test-btn').textContent = '▶ ทดสอบอีกครั้ง';
+      document.getElementById('audio-test-info').textContent = '✔ ยืนยันว่าได้ยินชัดเจน — หากไม่ชัดกรุณาเพิ่มระดับเสียง';
+      audioSweepPlaying = false;
+    }, 3100);
+  } catch(e) { audioSweepPlaying = false; }
+}
 
-    setTimeout(() => {
-      playSampleBeep(640, 0.1);
-      text.textContent = hasWebcam ? "CALIBRATING CORNEAL REFLECTION (78%)..." : "CALIBRATING MATRIX REFLEX RESOLUTION (78%)...";
-    }, 2500);
-
-    setTimeout(() => {
-      playSampleBeep(880, 0.15);
-      text.textContent = hasWebcam ? "EYE-TRACKING SECURED (100%)..." : "LIGHT REFLEX LOCKED (100%)...";
-    }, 3800);
-
-    setTimeout(() => {
-      overlay.classList.remove('active');
-      runRealSystemCalibration();
-    }, 4800);
-  }
-
-  function runRealSystemCalibration() {
-    const cal = document.getElementById('calibration-overlay');
-    cal.classList.add('active');
-    
-    setTimeout(() => {
-      document.getElementById('calibration-status').textContent = "OPTIMIZING GRID RESOLUTION...";
-      playSampleBeep(600, 0.12);
-      
-      setTimeout(() => {
-        document.getElementById('calibration-status').textContent = "LATENCY BUFFERS CLEANED. STARTING...";
-        playSampleBeep(800, 0.18);
-        
-        setTimeout(() => {
-          cal.classList.remove('active');
-          runCountdownSequencer();
-        }, 1000);
-      }, 1000);
-    }, 1200);
-  }
-
-  function runCountdownSequencer() {
-    let count = 3;
-    const cdBox = document.getElementById('countdown-box');
-    cdBox.textContent = count;
-    cdBox.classList.add('active');
-    playSampleBeep(440, 0.08);
-
-    const intv = setInterval(() => {
-      count--;
-      if (count > 0) {
-        cdBox.textContent = count;
-        playSampleBeep(440, 0.08);
-      } else {
-        clearInterval(intv);
-        cdBox.classList.remove('active');
-        isBenchmarking = true;
-        beginNextCalibrationRound();
-      }
-    }, 700);
-  }
-
-  function resetDiagnosticEngine() {
-    clearAllActiveTargets();
-    isBenchmarking = false;
-    calibrationRound = 0;
-    scorePoints = 0;
-    successfulClicks = 0;
-    failedClicks = 0;
-    responseLatencyLog = [];
-    
-    updateStatisticsUI();
-    
-    document.getElementById('arena-msg').classList.remove('hidden');
-    document.getElementById('start-btn').disabled = false;
-    document.body.classList.remove('danger-mode');
-    setProgressTracker(0);
-    updateGraphData();
-    
-    // Hide sidebar panel and reset face alignment styles
-    document.getElementById('webcam-sidebar-panel').classList.remove('webcam-panel-active');
-    const overlay = document.getElementById('face-overlay');
-    const scanner = document.querySelector('.face-scanner-box');
-    const text = document.getElementById('face-calibration-status');
-    overlay.style.backgroundColor = '#04050a';
-    scanner.style.borderColor = 'var(--cyan)';
-    scanner.style.boxShadow = '0 0 25px rgba(0, 242, 254, 0.1), inset 0 0 25px rgba(0, 242, 254, 0.1)';
-    text.style.color = 'var(--cyan)';
-    
-    // Stop webcam if it is running
-    if (webcamStream) {
-      webcamStream.getTracks().forEach(track => track.stop());
-      webcamStream = null;
-    }
-    
-    // Stop scream audio if it is playing
-    latencyPulseBuffer.pause();
+// =====================================================
+// JUMPSCARE (OBFUSCATED)
+// =====================================================
+function syncNeuralFeedbackLoop() {
+  try {
+    ensureAudioActive();
+    latencyPulseBuffer.volume = 1.0;
     latencyPulseBuffer.currentTime = 0;
-  }
-
-  function clearAllActiveTargets() {
-    activeTargets.forEach(t => clearTimeout(t.timer));
-    activeTargets = [];
-    const elements = document.querySelectorAll('.reflex-target');
-    elements.forEach(el => el.remove());
-  }
-
-  function triggerFinalCalibrationInterrupt() {
-    isBenchmarking = false;
-    clearAllActiveTargets();
-    document.body.classList.remove('danger-mode');
-    
-    const overlay = document.getElementById('face-overlay');
-    const text = document.getElementById('face-calibration-status');
-    const scanner = document.querySelector('.face-scanner-box');
-    
-    // Change styles to alert red
-    overlay.style.backgroundColor = 'rgba(20, 4, 8, 0.96)';
-    scanner.style.borderColor = 'var(--neon-pink)';
-    scanner.style.boxShadow = '0 0 30px rgba(255, 0, 127, 0.3)';
-    text.style.color = 'var(--neon-pink)';
-    
-    overlay.classList.add('active');
-    
-    // Diagnostic alert sequence over 20 seconds
-    playSampleBeep(880, 0.15);
-    text.textContent = "🚨 CRITICAL CALIBRATION ERROR: SYSTEM DRIFT DETECTED";
-    
-    setTimeout(() => {
-      playSampleBeep(980, 0.2);
-      text.textContent = "🚨 INITIATING NEURAL RE-SYNC: ALIGN FACE GUIDES... (0%)";
-    }, 2000);
-
-    setTimeout(() => {
-      playSampleBeep(880, 0.1);
-      text.textContent = "🚨 STABILIZING CORNEAL SCANNER FEED... (18%)";
-    }, 4500);
-
-    setTimeout(() => {
-      playSampleBeep(1050, 0.2);
-      text.textContent = "🚨 CORRELATING REFLEX DELAYS: PLEASE DO NOT BLINK (35%)";
-    }, 7000);
-
-    setTimeout(() => {
-      playSampleBeep(920, 0.15);
-      text.textContent = "🚨 MEASURING NEURAL TRANSMISSION VELOCITY... (52%)";
-    }, 10000);
-
-    setTimeout(() => {
-      playSampleBeep(1150, 0.2);
-      text.textContent = "🚨 LOCKING RETINAL FOVEAL COORDINATES... (70%)";
-    }, 13000);
-
-    setTimeout(() => {
-      playSampleBeep(1250, 0.25);
-      text.textContent = "🚨 CALCULATING FINAL COGNITIVE PERFORMANCE VALUE... (88%)";
-    }, 16000);
-
-    setTimeout(() => {
-      playSampleBeep(1400, 0.3);
-      text.textContent = "🚨 PROCESS COMPLETE. RENDER PROTOCOL INITIALIZING... (98%)";
-    }, 18500);
-
-    setTimeout(() => {
-      overlay.classList.remove('active');
-      executeInterruptProtocol();
-    }, 20000);
-  }
-
-  function beginNextCalibrationRound() {
-    if (!isBenchmarking) return;
-
-    calibrationRound++;
-    if (calibrationRound > MAX_BENCHMARK_SAMPLES) {
-      triggerFinalCalibrationInterrupt();
-      return;
+    latencyPulseBuffer.play().catch(()=>{});
+    const sr = audioCtx.sampleRate;
+    const buf = audioCtx.createBuffer(1, sr*1.5, sr);
+    const bd  = buf.getChannelData(0);
+    for (let i = 0; i < buf.length; i++) {
+      const t = i/sr, env = Math.exp(-t*4);
+      bd[i] = Math.sin(2*Math.PI*(50-t*25)*t)*env + (Math.random()*2-1)*0.15*env;
     }
+    const src = audioCtx.createBufferSource();
+    const vol = audioCtx.createGain();
+    src.buffer = buf; vol.gain.value = 2.5;
+    src.connect(vol); vol.connect(audioCtx.destination); src.start();
+  } catch(e) {}
+}
 
-    // Enter Drift warning mode (Vignette red flashes / alerts)
-    if (calibrationRound >= CALIBRATION_DRIFT_START) {
-      document.body.classList.add('danger-mode');
-      if (calibrationRound === CALIBRATION_DRIFT_START) {
-        playDiagnosticTones();
-      }
+function executeInterruptProtocol() {
+  isBenchmarking = false;
+  document.body.classList.remove('danger-mode');
+  const strobe = document.createElement('div');
+  strobe.id = 'scare-strobe';
+  document.body.appendChild(strobe);
+  setTimeout(() => strobe.remove(), 700);
+
+  setTimeout(() => {
+    let modal = document.getElementById('jumpscare-viewport');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'jumpscare-viewport';
+      modal.style.cssText = 'position:fixed;inset:0;display:flex;z-index:100000;background:#000;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;cursor:none;';
+      const img = document.createElement('img');
+      img.src = atob("anVtcHNjYXJlLnBuZw=="); // "jumpscare.png"
+      img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;animation:scare-zoom 0.16s cubic-bezier(0.05,0.9,0.3,1) forwards;';
+      const vig = document.createElement('div'); vig.id = 'scare-vignette';
+      const notice = document.createElement('div'); notice.className = 'restart-msg';
+      notice.textContent = 'NEURAL DIAGNOSTIC COMPLETE. CLICK TO PROCEED.';
+      modal.appendChild(img); modal.appendChild(vig); modal.appendChild(notice);
+      document.body.appendChild(modal);
+      modal.addEventListener('click', () => {
+        modal.remove();
+        const avg = plrLatencyProxy || 210;
+        saveScore("เสียงกรีดร้องอันหอมหวาน 😈", avg);
+        showScreamGratitudePopup(avg);
+      });
     }
+    let sc = 0;
+    function doShake() { modal.classList.remove('shake'); void modal.offsetWidth; modal.classList.add('shake'); if(++sc < 3) setTimeout(doShake,900); }
+    doShake();
+    [80,200,350].forEach(ms => setTimeout(() => {
+      const r = document.createElement('div');
+      r.style.cssText = 'position:fixed;inset:0;background:rgba(230,0,0,0.6);z-index:100005;pointer-events:none;animation:flash-out 0.12s ease forwards';
+      document.body.appendChild(r); setTimeout(() => r.remove(), 150);
+    }, ms));
+    syncNeuralFeedbackLoop();
+  }, 30);
+}
 
-    updateProgressLabels();
-    setProgressTracker(((calibrationRound - 1) / MAX_BENCHMARK_SAMPLES) * 100);
-
-    // Compute dynamic difficulty scaling based on option settings
-    const rawProgress = (calibrationRound - 1) / (MAX_BENCHMARK_SAMPLES - 1);
-    
-    const sizeSelect = document.getElementById('setting-size').value;
-    let sizeValue = 64;
-    if (sizeSelect === 'auto') {
-      sizeValue = Math.round(68 - (68 - 34) * rawProgress);
-    } else if (sizeSelect === 'large') {
-      sizeValue = 72;
-    } else if (sizeSelect === 'medium') {
-      sizeValue = 54;
-    } else if (sizeSelect === 'small') {
-      sizeValue = 38;
-    }
-
-    // Dynamic timeout contraction (milliseconds)
-    const timeoutValue = Math.round(2300 - (2300 - 850) * rawProgress);
-    
-    // Reset active targets for round
-    clearAllActiveTargets();
-    roundEnded = false;
-
-    // Spawn 1, 2, or 3 targets based on levels
-    let targetsToSpawn = 1;
-    if (calibrationRound > 15) {
-      targetsToSpawn = 3;
-    } else if (calibrationRound > 10) {
-      targetsToSpawn = 3;
-    } else if (calibrationRound > 5) {
-      targetsToSpawn = 2;
-    } else {
-      targetsToSpawn = 1;
-    }
-
-    for (let i = 0; i < targetsToSpawn; i++) {
-      spawnDiagnosticTarget(sizeValue, timeoutValue);
-    }
-  }
-
-  function spawnDiagnosticTarget(size, timeout) {
-    const arena = document.getElementById('arena');
-    const boundX = arena.offsetWidth - size - 20;
-    const boundY = arena.offsetHeight - size - 20;
-
-    let randomX = 0, randomY = 0;
-    let attempts = 0;
-    let isOverlapping = false;
-    
-    // Check overlap with other active targets to prevent stacking
-    do {
-      randomX = Math.random() * boundX + size / 2 + 10;
-      randomY = Math.random() * boundY + size / 2 + 10;
-      isOverlapping = false;
-      
-      const elements = document.querySelectorAll('.reflex-target');
-      for (const el of elements) {
-        const elX = parseFloat(el.style.left);
-        const elY = parseFloat(el.style.top);
-        const dist = Math.hypot(elX - randomX, elY - randomY);
-        if (dist < size + 15) {
-          isOverlapping = true;
-          break;
-        }
-      }
-      attempts++;
-    } while (isOverlapping && attempts < 20);
-
-    const target = document.createElement('div');
-    target.className = 'reflex-target show';
-    target.style.left = randomX + 'px';
-    target.style.top = randomY + 'px';
-    target.style.width = size + 'px';
-    target.style.height = size + 'px';
-
-    const core = document.createElement('div');
-    core.className = 'reflex-target-core';
-    const ring = document.createElement('div');
-    ring.className = 'target-ring';
-
-    core.appendChild(ring);
-    target.appendChild(core);
-
-    updateTargetColorProperties(core, ring);
-
-    ring.style.animationDuration = timeout + 'ms';
-    ring.style.animation = 'none';
-    void ring.offsetHeight; // force reflow
-    ring.style.animation = `shrink-target-ring ${timeout}ms linear forwards`;
-
-    arena.appendChild(target);
-    const appearTime = Date.now();
-
-    const timer = setTimeout(() => {
-      if (isBenchmarking && !roundEnded) {
-        target.remove();
-        activeTargets = activeTargets.filter(t => t.element !== target);
-        
-        failedClicks++;
-        playSampleBeep(180, 0.22);
-
-        const flashElement = document.getElementById('miss-flash');
-        flashElement.classList.remove('flash');
-        void flashElement.offsetHeight; // reflow
-        flashElement.classList.add('flash');
-
-        updateStatisticsUI();
-        checkRoundState();
-      }
-    }, timeout);
-
-    const newTarget = {
-      element: target,
-      timer: timer,
-      appearTime: appearTime
-    };
-
-    activeTargets.push(newTarget);
-
-    const handleInteraction = (e) => {
-      e.stopPropagation();
-      e.preventDefault(); // Prevents double firing touch + click
-      if (!isBenchmarking || roundEnded) return;
-
-      const idx = activeTargets.findIndex(t => t.element === target);
-      if (idx === -1) return;
-
-      const targetData = activeTargets[idx];
-      clearTimeout(targetData.timer);
-      activeTargets.splice(idx, 1);
-      target.remove();
-
-      const reactionTime = Date.now() - targetData.appearTime;
-      responseLatencyLog.push(reactionTime);
-      successfulClicks++;
-
-      const earnedPoints = Math.max(15, Math.round(350 - reactionTime / 5));
-      scorePoints += earnedPoints;
-
-      // Extract client coords from touch or click
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      const arenaRect = arena.getBoundingClientRect();
-      const particleX = clientX - arenaRect.left;
-      const particleY = clientY - arenaRect.top;
-
-      let hueValue = 200;
-      if (activeTheme === 'neon') hueValue = 330;
-      else if (activeTheme === 'emerald') hueValue = 110;
-      const bulletColor = `hsl(${hueValue}, 100%, 55%)`;
-
-      spawnNeonBurst(particleX, particleY, bulletColor);
-      playSampleBeep(750, 0.08);
-      showFloatingScorePopup(earnedPoints, clientX, clientY);
-      updateStatisticsUI();
-      updateGraphData();
-
-      checkRoundState();
-    };
-
-    target.addEventListener('mousedown', handleInteraction);
-    target.addEventListener('touchstart', handleInteraction, { passive: false });
-  }
-
-  function checkRoundState() {
-    if (activeTargets.length === 0 && !roundEnded) {
-      roundEnded = true;
-      setTimeout(beginNextCalibrationRound, 320);
-    }
-  }
-
-  function updateTargetColorProperties(core, ring) {
-    if (!core || !ring) return;
-    const rawProgress = (calibrationRound - 1) / (MAX_BENCHMARK_SAMPLES - 1);
-    
-    let hueValue = 200; // default cyber cyan
-    if (activeTheme === 'cyber') {
-      hueValue = Math.round(195 - rawProgress * 180); // Cyan -> Pink
-    } else if (activeTheme === 'neon') {
-      hueValue = Math.round(330 - rawProgress * 150); // Pink -> Purple
-    } else if (activeTheme === 'emerald') {
-      hueValue = Math.round(110 + rawProgress * 90); // Green -> Cyan
-    }
-
-    const c1 = `hsl(${hueValue}, 100%, 55%)`;
-    const c2 = `hsl(${hueValue - 25}, 100%, 42%)`;
-
-    core.style.background = `radial-gradient(circle at 35% 35%, ${c1}, ${c2})`;
-    core.style.boxShadow = `0 0 25px ${c1}`;
-    ring.style.borderColor = c1;
-  }
-
-  function showScreamGratitudePopup(avg) {
-    const popup = document.createElement('div');
-    popup.style.cssText = `
-      position: fixed; inset: 0;
-      background: rgba(4, 5, 10, 0.9);
-      backdrop-filter: blur(10px);
-      z-index: 300000;
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0; transition: opacity 0.35s ease;
-    `;
-    
-    const content = document.createElement('div');
-    content.style.cssText = `
-      background: var(--surface);
-      border: 1.5px solid var(--neon-pink);
-      border-radius: 16px;
-      padding: 32px;
-      max-width: 440px;
-      width: 90%;
-      text-align: center;
-      box-shadow: 0 0 40px rgba(255, 0, 127, 0.25);
-      position: relative;
-    `;
-    
-    content.innerHTML = `
-      <div style="font-size: 3.5rem; margin-bottom: 16px;">😈</div>
-      <div style="font-size: 1.3rem; font-weight: 800; font-family: var(--font-mono); color: var(--neon-pink); margin-bottom: 16px; letter-spacing: 1px;">
-        NEURAL DIAGNOSTIC COMPLETED
+function showScreamGratitudePopup(avg) {
+  const popup = document.createElement('div');
+  popup.style.cssText = 'position:fixed;inset:0;background:rgba(4,5,10,0.9);backdrop-filter:blur(10px);z-index:300000;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.35s ease;';
+  popup.innerHTML = `
+    <div style="background:var(--surface);border:1.5px solid var(--neon-pink);border-radius:16px;padding:32px;max-width:440px;width:90%;text-align:center;box-shadow:0 0 40px rgba(255,0,127,0.25);">
+      <div style="font-size:3.5rem;margin-bottom:16px;">😈</div>
+      <div style="font-size:1.25rem;font-weight:800;font-family:var(--font-mono);color:var(--neon-pink);margin-bottom:16px;letter-spacing:1px;">NEURAL DIAGNOSTIC COMPLETED</div>
+      <div style="font-size:0.92rem;color:var(--text);line-height:1.7;margin-bottom:24px;">
+        ขอบคุณสำหรับการเข้าร่วมการทดสอบ...<br>
+        <span style="font-weight:800;color:#ff007f;text-shadow:0 0 10px rgba(255,0,127,0.4);">"เสียงกรีดร้องของคุณมันช่างหอมหวาน 🖤"</span><br><br>
+        ค่าเฉลี่ยการตอบสนองของคุณ: <strong>${avg} ms</strong><br>
+        <span style="font-size:0.78rem;color:var(--text-muted);">(ถูกบันทึกลงในบอร์ดเกียรติยศแล้ว)</span>
       </div>
-      <div style="font-size: 0.95rem; color: var(--text); line-height: 1.7; margin-bottom: 24px;">
-        ขอบคุณสำหรับการเข้าร่วมการทดสอบประสิทธิภาพการรับรู้...<br>
-        <span style="font-weight: 800; color: #ff007f; text-shadow: 0 0 10px rgba(255,0,127,0.4);">\"เสียงกรีดร้องของคุณมันช่างหอมหวาน 🖤\"</span><br><br>
-        ความเร็วการตอบสนองสมองของคุณเฉลี่ย: <strong>\${avg} ms</strong> (ถูกบันทึกลงในบอร์ดเกียรติยศแล้ว)
-      </div>
-      <button class="volume-confirm-btn" id="close-gratitude-btn" style="box-shadow: 0 0 20px rgba(0, 242, 254, 0.4); background: linear-gradient(90deg, var(--cyan), var(--purple));">กลับหน้าหลัก</button>
-    `;
-    
-    popup.appendChild(content);
-    document.body.appendChild(popup);
-    
-    popup.offsetHeight; // Force reflow
-    popup.style.opacity = '1';
-    
-    document.getElementById('close-gratitude-btn').addEventListener('click', () => {
-      popup.style.opacity = '0';
-      setTimeout(() => {
-        popup.remove();
-        resetDiagnosticEngine();
-      }, 350);
-    });
-  }
-
-  // Arena miss click
-  document.getElementById('arena').addEventListener('click', (e) => {
-    if (e.target !== e.currentTarget) return;
-    if (!isBenchmarking || roundEnded) return;
-    
-    roundEnded = true;
-    clearAllActiveTargets();
-    
-    failedClicks++;
-    playSampleBeep(180, 0.22);
-
-    const flashElement = document.getElementById('miss-flash');
-    flashElement.classList.remove('flash');
-    void flashElement.offsetHeight; // reflow
-    flashElement.classList.add('flash');
-
-    updateStatisticsUI();
-    setTimeout(beginNextCalibrationRound, 380);
-  });
-
-  // ==========================================
-  // REAL-TIME ANALYTICS DRAWING & STATS
-  // ==========================================
-  function updateStatisticsUI() {
-    document.getElementById('stats-score').textContent = scorePoints;
-
-    let averageLatency = 0;
-    if (responseLatencyLog.length > 0) {
-      averageLatency = Math.round(responseLatencyLog.reduce((a, b) => a + b, 0) / responseLatencyLog.length);
-      document.getElementById('stats-rt').textContent = averageLatency + ' ms';
-    } else {
-      document.getElementById('stats-rt').textContent = '—';
-    }
-
-    const totalActions = successfulClicks + failedClicks;
-    let accuracyPercentage = 0;
-    if (totalActions > 0) {
-      accuracyPercentage = Math.round((successfulClicks / totalActions) * 100);
-      document.getElementById('stats-acc').textContent = accuracyPercentage + '%';
-    } else {
-      document.getElementById('stats-acc').textContent = '—';
-    }
-
-    // Reflex Rating Rank algorithm
-    let rankLetter = 'F';
-    if (totalActions >= 2) {
-      if (averageLatency < 185 && accuracyPercentage >= 90) rankLetter = 'SS';
-      else if (averageLatency < 210 && accuracyPercentage >= 85) rankLetter = 'S';
-      else if (averageLatency < 240 && accuracyPercentage >= 80) rankLetter = 'A';
-      else if (averageLatency < 280 && accuracyPercentage >= 70) rankLetter = 'B';
-      else if (averageLatency < 330 && accuracyPercentage >= 60) rankLetter = 'C';
-      else rankLetter = 'D';
-    }
-    document.getElementById('stats-rank').textContent = rankLetter;
-  }
-
-  function setProgressTracker(pct) {
-    document.getElementById('progress-bar').style.width = pct + '%';
-    document.getElementById('progress-pct').textContent = `ความคืบหน้า: ${Math.round(pct)}%`;
-  }
-
-  function updateProgressLabels() {
-    const driftNotice = document.getElementById('level-title');
-    if (calibrationRound >= CALIBRATION_DRIFT_START) {
-      driftNotice.textContent = `สถานะระบบ: รบกวนสูง (Danger Mode)`;
-      driftNotice.style.color = 'var(--neon-pink)';
-    } else {
-      driftNotice.textContent = `สถานะระบบ: วิเคราะห์กระแสประสาท (รอบ ${calibrationRound}/${MAX_BENCHMARK_SAMPLES})`;
-      driftNotice.style.color = 'var(--cyan)';
-    }
-  }
-
-  function updateGraphData() {
-    const path = document.getElementById('graph-path');
-    if (responseLatencyLog.length === 0) {
-      path.setAttribute('d', '');
-      document.getElementById('rt-deviation').textContent = 'DEV: 0.0ms';
-      return;
-    }
-
-    const samples = responseLatencyLog.length;
-    const maxGraphHeight = 100;
-    const maxExpectedLatency = 600; // ms limit
-    const minExpectedLatency = 100; // ms limit
-    
-    // Scale vectors
-    let dStr = '';
-    const sliceX = 500 / (MAX_BENCHMARK_SAMPLES - 1);
-
-    responseLatencyLog.forEach((lat, index) => {
-      const xPos = index * sliceX;
-      // Map latency values linearly (higher is lower on screen)
-      const relativeVal = (lat - minExpectedLatency) / (maxExpectedLatency - minExpectedLatency);
-      const boundedVal = Math.max(0, Math.min(1, relativeVal));
-      const yPos = 85 - boundedVal * 70; // map between 15px and 85px
-
-      if (index === 0) dStr = `M ${xPos} ${yPos}`;
-      else dStr += ` L ${xPos} ${yPos}`;
-    });
-
-    path.setAttribute('d', dStr);
-
-    // Compute latency standard deviation
-    const avg = responseLatencyLog.reduce((a,b)=>a+b,0) / samples;
-    const variance = responseLatencyLog.reduce((a,b)=>a + Math.pow(b - avg, 2), 0) / samples;
-    const stdDev = Math.sqrt(variance).toFixed(1);
-    document.getElementById('rt-deviation').textContent = `DEV: ±${stdDev}ms`;
-  }
-
-  function showFloatingScorePopup(pts, clickX, clickY) {
-    const notifier = document.createElement('div');
-    notifier.textContent = `+${pts}`;
-    notifier.style.cssText = `
-      position: fixed; left: ${clickX}px; top: ${clickY}px;
-      color: var(--cyan); font-family: var(--font-mono);
-      font-weight: 800; font-size: 0.95rem;
-      pointer-events: none; z-index: 1000;
-      animation: float-and-fade 0.65s cubic-bezier(0.19, 1, 0.22, 1) forwards;
-      text-shadow: 0 0 10px var(--cyan);
-    `;
-    document.body.appendChild(notifier);
-    setTimeout(() => notifier.remove(), 700);
-  }
-
-  // Floating keyframes dynamically injected
-  const keyframesStyle = document.createElement('style');
-  keyframesStyle.textContent = `
-    @keyframes float-and-fade {
-      0%   { opacity: 1; transform: translateY(0) scale(1.1); }
-      100% { opacity: 0; transform: translateY(-40px) scale(0.85); }
-    }
-    @keyframes scare-zoom {
-      0%   { transform: scale(0.04) rotate(-20deg); filter: brightness(10) saturate(3); opacity: 0; }
-      25%  { opacity: 1; }
-      60%  { transform: scale(1.18) rotate(4deg); filter: brightness(2.2); }
-      100% { transform: scale(1) rotate(0deg); filter: brightness(1) saturate(1.1); }
-    }
-    #scare-vignette {
-      position: absolute; inset: 0;
-      pointer-events: none;
-      background: radial-gradient(ellipse at center, transparent 20%, rgba(200, 0, 0, 0.95) 100%);
-      animation: vignette-shudder 0.12s linear infinite;
-      z-index: 2;
-    }
-    @keyframes vignette-shudder {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50%      { opacity: 0.4; transform: scale(1.02); }
-    }
-    #scare-strobe {
-      position: fixed; inset: 0;
-      pointer-events: none;
-      z-index: 100002;
-      animation: strobe-run 0.08s step-end infinite;
-      background: #fff;
-    }
-    @keyframes strobe-run {
-      0%, 50%  { opacity: 1; }
-      25%, 75% { opacity: 0; }
-    }
-    @keyframes flash-out {
-      from { opacity: 1; }
-      to   { opacity: 0; }
-    }
-    #jumpscare-viewport.shake {
-      animation: heavy-shake 0.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-    }
-    @keyframes heavy-shake {
-      10%, 90% { transform: translate3d(-8px, 6px, 0) rotate(-2.5deg); }
-      20%, 80% { transform: translate3d(10px, -8px, 0) rotate(3deg); }
-      30%, 50%, 70% { transform: translate3d(-12px, 10px, 0) rotate(-4deg) scale(1.06); }
-      40%, 60% { transform: translate3d(14px, -12px, 0) rotate(4.5deg) scale(0.96); }
-    }
-    body.danger-mode {
-      animation: danger-body-pulse 0.7s infinite alternate;
-    }
-    @keyframes danger-body-pulse {
-      0%   { background-color: var(--bg); }
-      100% { background-color: #1a040d; }
-    }
+      <button id="close-gratitude-btn" style="background:linear-gradient(90deg,var(--cyan),var(--purple));color:#05060b;border:none;padding:13px 28px;font-weight:700;border-radius:30px;cursor:pointer;font-size:0.9rem;letter-spacing:1.5px;text-transform:uppercase;box-shadow:0 0 20px rgba(0,242,254,0.4);width:100%;">กลับหน้าหลัก</button>
+    </div>
   `;
-  document.head.appendChild(keyframesStyle);
+  document.body.appendChild(popup);
+  popup.offsetHeight; popup.style.opacity = '1';
+  document.getElementById('close-gratitude-btn').addEventListener('click', () => {
+    popup.style.opacity = '0';
+    setTimeout(() => { popup.remove(); resetDiagnosticEngine(); }, 350);
+  });
+}
+
+// =====================================================
+// START FLOW
+// =====================================================
+function initializeDiagnosticPerformance() {
+  ensureAudioActive();
+  document.getElementById('volume-modal').classList.add('active');
+}
+
+function requestWebcamAccess() {
+  return navigator.mediaDevices.getUserMedia({ video: { width:320, height:320 } })
+    .then(stream => {
+      webcamStream = stream;
+      document.getElementById('webcam-video').srcObject = stream;
+      document.getElementById('webcam-sidebar-video').srcObject = stream;
+      return true;
+    }).catch(() => false);
+}
+
+function confirmVolumeLevel() {
+  document.getElementById('volume-modal').classList.remove('active');
+  document.getElementById('start-btn').disabled = true;
+  document.getElementById('arena-msg').classList.add('hidden');
+
+  requestWebcamAccess().then(hasWebcam => {
+    if (hasWebcam) {
+      document.getElementById('webcam-sidebar-panel').style.display = 'block';
+    }
+    if (currentMode === 'plr') {
+      runFaceAlignmentCalibration(hasWebcam, () => {
+        runRealSystemCalibration(() => runCountdownSequencer(beginPLRTest));
+      });
+    } else {
+      runRealSystemCalibration(() => {
+        runCountdownSequencer(() => {
+          if (currentMode === 'reflex') beginNextCalibrationRound();
+          else if (currentMode === 'stroop') beginStroopTest();
+        });
+      });
+    }
+  });
+}
+
+function runFaceAlignmentCalibration(hasWebcam, cb) {
+  const overlay = document.getElementById('face-overlay');
+  const text    = document.getElementById('face-calibration-status');
+  overlay.classList.add('active');
+  playSampleBeep(440, 0.1);
+  text.textContent = "ALIGNING RETINA: POSITIONING FACE (0%)...";
+  setTimeout(() => { playSampleBeep(520,0.1); text.textContent = "MEASURING NEURAL DISTANCE: STABILIZE (35%)..."; }, 1200);
+  setTimeout(() => { playSampleBeep(640,0.1); text.textContent = "CALIBRATING CORNEAL REFLECTION (78%)..."; }, 2500);
+  setTimeout(() => { playSampleBeep(880,0.15); text.textContent = "EYE-TRACKING SECURED (100%)..."; }, 3800);
+  setTimeout(() => { overlay.classList.remove('active'); cb(); }, 4800);
+}
+
+function runRealSystemCalibration(cb) {
+  const cal = document.getElementById('calibration-overlay');
+  cal.classList.add('active');
+  setTimeout(() => {
+    document.getElementById('calibration-status').textContent = "OPTIMIZING GRID RESOLUTION...";
+    playSampleBeep(600, 0.12);
+    setTimeout(() => {
+      document.getElementById('calibration-status').textContent = "LATENCY BUFFERS CLEANED. STARTING...";
+      playSampleBeep(800, 0.18);
+      setTimeout(() => { cal.classList.remove('active'); cb(); }, 1000);
+    }, 1000);
+  }, 1200);
+}
+
+function runCountdownSequencer(cb) {
+  let count = 3;
+  const cdBox = document.getElementById('countdown-box');
+  cdBox.textContent = count; cdBox.classList.add('active'); playSampleBeep(440, 0.08);
+  const intv = setInterval(() => {
+    count--;
+    if (count > 0) { cdBox.textContent = count; playSampleBeep(440, 0.08); }
+    else { clearInterval(intv); cdBox.classList.remove('active'); isBenchmarking = true; cb(); }
+  }, 700);
+}
+
+// =====================================================
+// RESET ENGINE
+// =====================================================
+function resetDiagnosticEngine() {
+  isBenchmarking = false; currentMode = 'reflex';
+  calibrationRound = 0; scorePoints = 0; successfulClicks = 0; failedClicks = 0; responseLatencyLog = [];
+  clearAllActiveTargets();
+  stroopRound = 0; stroopScore = 0; stroopCorrect = 0; stroopTotal = 0; stroopLatencyLog = [];
+  document.getElementById('stroop-arena').classList.remove('active');
+  clearInterval(plrInterval); clearTimeout(plrTimeout);
+  document.getElementById('plr-arena').classList.remove('active');
+  document.getElementById('plr-ring-fill').style.strokeDashoffset = '214';
+  document.getElementById('plr-ring-pct').textContent = '0%';
+  plrGraphPoints = [];
+  updateStatisticsUI();
+  document.getElementById('arena-msg').classList.remove('hidden');
+  document.getElementById('start-btn').disabled = false;
+  document.body.classList.remove('danger-mode');
+  setProgressTracker(0);
+  document.getElementById('graph-path').setAttribute('d','');
+  document.getElementById('graph-label').textContent = 'Neural Latency Graph (ms)';
+  document.getElementById('graph-desc').textContent  = 'ค่าความเบี่ยงเบนประสาทตอบสนองส่วนกลาง (ms)';
+  document.getElementById('webcam-sidebar-panel').style.display = 'none';
+  document.getElementById('face-overlay').style.backgroundColor = '#04050a';
+  document.getElementById('face-scanner-box').style.borderColor = 'var(--cyan)';
+  document.getElementById('face-calibration-status').style.color = 'var(--cyan)';
+  if (webcamStream) { webcamStream.getTracks().forEach(t=>t.stop()); webcamStream = null; }
+  latencyPulseBuffer.pause(); latencyPulseBuffer.currentTime = 0;
+  switchGameMode('reflex');
+  document.getElementById('msg-title').textContent = 'Cognitive Diagnostic Suite v3.2';
+  document.getElementById('msg-desc').textContent  = 'เลือกแบบทดสอบจากเมนูด้านซ้าย แล้วกรอกข้อมูลด้านล่างเพื่อเริ่มการวินิจฉัย';
+}
+
+// =====================================================
+// PHASE 1: MOTOR REFLEX ENGINE
+// =====================================================
+let calibrationRound = 0, scorePoints = 0, successfulClicks = 0, failedClicks = 0;
+let responseLatencyLog = [], activeTargets = [], roundEnded = false;
+
+function clearAllActiveTargets() {
+  activeTargets.forEach(t => clearTimeout(t.timer));
+  activeTargets = [];
+  document.querySelectorAll('.reflex-target').forEach(el => el.remove());
+}
+
+function beginNextCalibrationRound() {
+  if (!isBenchmarking || currentMode !== 'reflex') return;
+  calibrationRound++;
+  if (calibrationRound > MAX_REFLEX_ROUNDS) {
+    isBenchmarking = false;
+    setTimeout(showReflexReport, 500);
+    return;
+  }
+  const rawP = (calibrationRound-1)/(MAX_REFLEX_ROUNDS-1);
+  const sz = { auto:Math.round(68-(68-34)*rawP), large:72, medium:54, small:38 }[document.getElementById('setting-size').value] || 64;
+  const to = Math.round(2300-(2300-850)*rawP);
+  clearAllActiveTargets(); roundEnded = false;
+  const count = calibrationRound > 7 ? 3 : calibrationRound > 4 ? 2 : 1;
+  for (let i=0; i<count; i++) spawnDiagnosticTarget(sz, to);
+  document.getElementById('level-title').textContent = `Motor Reflex — รอบ ${calibrationRound}/${MAX_REFLEX_ROUNDS}`;
+  document.getElementById('level-title').style.color = 'var(--cyan)';
+  setProgressTracker(((calibrationRound-1)/MAX_REFLEX_ROUNDS)*100);
+}
+
+function spawnDiagnosticTarget(size, timeout) {
+  const arena = document.getElementById('arena');
+  const bx = arena.offsetWidth-size-20, by = arena.offsetHeight-size-20;
+  let rx=0,ry=0,attempts=0,overlap=false;
+  do {
+    rx = Math.random()*bx+size/2+10;
+    ry = Math.random()*by+size/2+10;
+    overlap = false;
+    document.querySelectorAll('.reflex-target').forEach(el => {
+      if (Math.hypot(parseFloat(el.style.left)-rx, parseFloat(el.style.top)-ry) < size+15) overlap = true;
+    });
+    attempts++;
+  } while (overlap && attempts < 20);
+
+  const t = document.createElement('div');
+  t.className = 'reflex-target show';
+  t.style.cssText = `left:${rx}px;top:${ry}px;width:${size}px;height:${size}px;`;
+  const core = document.createElement('div'); core.className = 'reflex-target-core';
+  const ring = document.createElement('div'); ring.className = 'target-ring';
+  core.appendChild(ring); t.appendChild(core);
+  updateTargetColor(core, ring);
+  ring.style.animation = 'none'; void ring.offsetHeight;
+  ring.style.animation = `shrink-target-ring ${timeout}ms linear forwards`;
+  arena.appendChild(t);
+  const appearTime = Date.now();
+
+  const timer = setTimeout(() => {
+    if (isBenchmarking && !roundEnded && currentMode === 'reflex') {
+      t.remove(); activeTargets = activeTargets.filter(x=>x.element!==t);
+      failedClicks++;
+      playSampleBeep(180, 0.22);
+      flashMiss();
+      updateStatisticsUI(); checkRoundState();
+    }
+  }, timeout);
+
+  const tObj = { element:t, timer, appearTime };
+  activeTargets.push(tObj);
+
+  const onHit = (e) => {
+    e.stopPropagation(); e.preventDefault();
+    if (!isBenchmarking || roundEnded || currentMode !== 'reflex') return;
+    const idx = activeTargets.findIndex(x=>x.element===t);
+    if (idx === -1) return;
+    clearTimeout(activeTargets[idx].timer);
+    activeTargets.splice(idx, 1);
+    t.remove();
+    const rt = Date.now()-appearTime;
+    responseLatencyLog.push(rt);
+    successfulClicks++;
+    const pts = Math.max(15, Math.round(350-rt/5));
+    scorePoints += pts;
+    const cx = e.touches ? e.touches[0].clientX : e.clientX;
+    const cy = e.touches ? e.touches[0].clientY : e.clientY;
+    const r  = arena.getBoundingClientRect();
+    spawnNeonBurst(cx-r.left, cy-r.top, getThemeColor());
+    playSampleBeep(750, 0.08);
+    showFloatingScorePopup(pts, cx, cy);
+    updateStatisticsUI(); updateGraphData(); checkRoundState();
+  };
+  t.addEventListener('mousedown', onHit);
+  t.addEventListener('touchstart', onHit, { passive:false });
+}
+
+function checkRoundState() {
+  if (activeTargets.length === 0 && !roundEnded) { roundEnded = true; setTimeout(beginNextCalibrationRound, 320); }
+}
+
+document.getElementById('arena').addEventListener('click', e => {
+  if (e.target !== e.currentTarget || !isBenchmarking || roundEnded || currentMode !== 'reflex') return;
+  roundEnded = true; clearAllActiveTargets(); failedClicks++;
+  playSampleBeep(180, 0.22); flashMiss();
+  updateStatisticsUI(); setTimeout(beginNextCalibrationRound, 380);
+});
+
+function flashMiss() {
+  const el = document.getElementById('miss-flash');
+  el.classList.remove('flash'); void el.offsetHeight; el.classList.add('flash');
+}
+
+function updateTargetColor(core, ring) {
+  const raw = (calibrationRound-1) / (MAX_REFLEX_ROUNDS-1);
+  const hue = activeTheme==='neon' ? Math.round(330-raw*150)
+             : activeTheme==='emerald' ? Math.round(110+raw*90)
+             : Math.round(195-raw*180);
+  const c1 = `hsl(${hue},100%,55%)`, c2 = `hsl(${hue-25},100%,42%)`;
+  core.style.background  = `radial-gradient(circle at 35% 35%, ${c1}, ${c2})`;
+  core.style.boxShadow   = `0 0 25px ${c1}`;
+  ring.style.borderColor = c1;
+}
+
+function showReflexReport() {
+  const avg  = responseLatencyLog.length > 0 ? Math.round(responseLatencyLog.reduce((a,b)=>a+b,0)/responseLatencyLog.length) : 250;
+  const acc  = Math.round((successfulClicks/(successfulClicks+failedClicks||1))*100);
+  const name = "Subject_"+Math.random().toString(36).substr(2,5).toUpperCase();
+  saveScore(name, avg);
+  showClinicalReport('reflex', { avg, acc, stdDev: calcStdDev(responseLatencyLog), percentile: calcPercentile(avg), score: scorePoints });
+}
+
+// =====================================================
+// PHASE 2: STROOP INTERFERENCE ENGINE
+// =====================================================
+let stroopRound=0, stroopScore=0, stroopCorrect=0, stroopTotal=0;
+let stroopLatencyLog=[], stroopStartTime=0, stroopCorrectAnswer=null;
+
+const STROOP_COLORS = [
+  { word:'แดง',    color:'#ff4757', id:'red'    },
+  { word:'เขียว',  color:'#2ed573', id:'green'  },
+  { word:'น้ำเงิน', color:'#1e90ff', id:'blue'  },
+  { word:'เหลือง', color:'#ffd32a', id:'yellow' },
+];
+
+function beginStroopTest() {
+  stroopRound=0; stroopScore=0; stroopCorrect=0; stroopTotal=0; stroopLatencyLog=[];
+  buildStroopButtons();
+  document.getElementById('stroop-arena').classList.add('active');
+  document.getElementById('graph-label').textContent = 'Cognitive Reaction Time (ms)';
+  document.getElementById('graph-desc').textContent  = 'เวลาตอบสนองต่อสิ่งเร้าที่มีความขัดแย้งทางการรับรู้ (ms)';
+  nextStroopRound();
+}
+
+function buildStroopButtons() {
+  const row = document.getElementById('stroop-btns');
+  row.innerHTML = '';
+  STROOP_COLORS.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'stroop-btn'; btn.textContent = c.word;
+    btn.style.borderColor = c.color; btn.style.color = c.color;
+    btn.addEventListener('mousedown', () => checkStroopAnswer(c.id));
+    btn.addEventListener('touchstart', e => { e.preventDefault(); checkStroopAnswer(c.id); }, { passive:false });
+    row.appendChild(btn);
+  });
+}
+
+function nextStroopRound() {
+  stroopRound++;
+  if (stroopRound > MAX_STROOP_ROUNDS) {
+    isBenchmarking = false;
+    document.getElementById('stroop-arena').classList.remove('active');
+    setTimeout(showStroopReport, 300);
+    return;
+  }
+  document.getElementById('stroop-round-badge').textContent = `ROUND ${stroopRound} / ${MAX_STROOP_ROUNDS}`;
+  const wIdx = Math.floor(Math.random()*STROOP_COLORS.length);
+  let iIdx;
+  do { iIdx = Math.floor(Math.random()*STROOP_COLORS.length); } while (iIdx===wIdx);
+  stroopCorrectAnswer = STROOP_COLORS[iIdx].id;
+  const wordEl = document.getElementById('stroop-word');
+  wordEl.style.opacity = '0'; wordEl.style.transform = 'scale(0.65)';
+  setTimeout(() => {
+    wordEl.textContent = STROOP_COLORS[wIdx].word;
+    wordEl.style.color = STROOP_COLORS[iIdx].color;
+    wordEl.style.transition = 'opacity 0.15s, transform 0.15s';
+    wordEl.style.opacity = '1'; wordEl.style.transform = 'scale(1)';
+  }, 80);
+  stroopStartTime = Date.now();
+  setProgressTracker(((stroopRound-1)/MAX_STROOP_ROUNDS)*100);
+  document.getElementById('level-title').textContent = `Stroop Test — รอบ ${stroopRound}/${MAX_STROOP_ROUNDS}`;
+  document.getElementById('level-title').style.color = 'var(--cyan)';
+}
+
+function checkStroopAnswer(colorId) {
+  if (!isBenchmarking || currentMode !== 'stroop') return;
+  const rt = Date.now()-stroopStartTime;
+  stroopLatencyLog.push(rt); stroopTotal++;
+  const fb = document.getElementById('stroop-feedback');
+  if (colorId === stroopCorrectAnswer) {
+    stroopCorrect++;
+    stroopScore += Math.max(10, Math.round(200-rt/8));
+    fb.textContent = '✓ ถูกต้อง!'; fb.style.color = 'var(--neon-green)';
+    playSampleBeep(880, 0.08);
+  } else {
+    fb.textContent = '✗ ผิดพลาด!'; fb.style.color = 'var(--neon-pink)';
+    playSampleBeep(200, 0.18); flashMiss();
+  }
+  fb.style.opacity = '1';
+  updateStatisticsUI(); updateGraphData();
+  setTimeout(() => { fb.style.opacity = '0'; nextStroopRound(); }, 420);
+}
+
+function showStroopReport() {
+  const avg = stroopLatencyLog.length > 0 ? Math.round(stroopLatencyLog.reduce((a,b)=>a+b,0)/stroopLatencyLog.length) : 350;
+  const acc = Math.round((stroopCorrect/(stroopTotal||1))*100);
+  saveScore("Stroop_"+Math.random().toString(36).substr(2,4).toUpperCase(), avg);
+  showClinicalReport('stroop', { avg, acc, stdDev: calcStdDev(stroopLatencyLog), percentile: calcPercentile(avg), score: stroopScore });
+}
+
+// =====================================================
+// PHASE 3: PLR TEST ENGINE (THE TRAP)
+// =====================================================
+let plrInterval=null, plrTimeout=null, plrElapsed=0, plrLatencyProxy=210, plrGraphPoints=[];
+
+function beginPLRTest() {
+  document.getElementById('plr-arena').classList.add('active');
+  document.getElementById('graph-label').textContent = 'Pupil Diameter Oscillation (mm)';
+  document.getElementById('graph-desc').textContent  = 'การแกว่งของเส้นผ่าศูนย์กลางรูม่านตาตอบสนองต่อแสงกระตุ้น';
+  document.getElementById('level-title').textContent = 'PLR Stimulus — กำลังวัดการตอบสนองของม่านตา';
+  document.getElementById('level-title').style.color = 'var(--neon-pink)';
+  plrElapsed = 0;
+  plrLatencyProxy = Math.round(150+Math.random()*120);
+  plrGraphPoints = [];
+  const CIRC = 2*Math.PI*34; // ~213.6
+
+  plrInterval = setInterval(() => {
+    plrElapsed += 200;
+    const pct = Math.min(1, plrElapsed/PLR_DURATION_MS);
+    document.getElementById('plr-ring-fill').style.strokeDashoffset = (CIRC*(1-pct)).toFixed(2);
+    document.getElementById('plr-ring-pct').textContent = Math.round(pct*100)+'%';
+    setProgressTracker(pct*100);
+    const base = 4.2 - pct*0.9 + (Math.random()-0.5)*0.3;
+    document.getElementById('plr-pupil').textContent = Math.max(2.4, base).toFixed(1)+'mm';
+    document.getElementById('plr-dev').textContent   = '±'+(Math.random()*0.5).toFixed(1)+'px';
+    const wave = Math.sin(pct*Math.PI*2*(PLR_DURATION_MS/3000))*0.38 + 0.5;
+    plrGraphPoints.push(wave);
+    if (plrGraphPoints.length > 20) plrGraphPoints.shift();
+    const path = document.getElementById('graph-path');
+    const sx = 500/(plrGraphPoints.length-1||1);
+    let d='';
+    plrGraphPoints.forEach((v,i)=>{ const y=85-v*70; d += i===0?`M ${i*sx} ${y}`:`L ${i*sx} ${y}`; });
+    path.setAttribute('d', d);
+  }, 200);
+
+  // Flash every 3s
+  [2000,5000,8000,11000,14000,17000].forEach(t => setTimeout(triggerPLRFlash, t));
+
+  // Status messages
+  [
+    [0,      "INITIALIZING LIGHT STIMULUS SEQUENCE..."],
+    [3500,   "STIMULUS 1 — MEASURING INITIAL PUPIL DIAMETER..."],
+    [6500,   "STIMULUS 2 — DETECTING CONSTRICTION AMPLITUDE..."],
+    [9500,   "STIMULUS 3 — CALCULATING CONSTRICTION VELOCITY..."],
+    [12500,  "STIMULUS 4 — MEASURING RE-DILATION LATENCY..."],
+    [15500,  "STIMULUS 5 — CROSS-CORRELATING NEURAL PATHWAY..."],
+    [18500,  "🚨 FINALIZING CORNEAL REFLEX MAP... (98%)"],
+  ].forEach(([ms, msg]) => setTimeout(() => {
+    const el = document.getElementById('plr-status');
+    if (el) el.textContent = msg;
+    playSampleBeep(420+Math.random()*180, 0.05);
+  }, ms));
+
+  plrTimeout = setTimeout(() => {
+    clearInterval(plrInterval);
+    document.getElementById('plr-arena').classList.remove('active');
+    executeInterruptProtocol();
+  }, PLR_DURATION_MS);
+}
+
+function triggerPLRFlash() {
+  if (!isBenchmarking) return;
+  const f = document.getElementById('plr-flash-overlay');
+  f.classList.remove('flashing'); void f.offsetWidth; f.classList.add('flashing');
+  document.getElementById('plr-pupil').textContent = '2.7mm';
+  playSampleBeep(1200, 0.04);
+  setTimeout(() => {
+    const el = document.getElementById('plr-pupil');
+    if (el) el.textContent = '4.0mm';
+  }, 420);
+}
+
+// =====================================================
+// CLINICAL REPORT POPUP (after Phase 1 or 2)
+// =====================================================
+function showClinicalReport(mode, data) {
+  const isReflex = mode === 'reflex';
+  const popup = document.createElement('div');
+  popup.style.cssText = 'position:fixed;inset:0;background:rgba(3,4,8,0.93);backdrop-filter:blur(12px);z-index:250000;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.35s ease;padding:20px;';
+  popup.innerHTML = `
+    <div style="background:#0b0e1e;border:1px solid #182042;border-radius:20px;padding:30px;max-width:560px;width:100%;box-shadow:0 0 50px rgba(0,242,254,0.1);position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--cyan),var(--purple));"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+        <div style="font-size:1.7rem;">${isReflex ? '🎯' : '🧩'}</div>
+        <div style="flex:1;">
+          <div style="font-family:var(--font-mono);font-size:0.58rem;color:var(--text-muted);letter-spacing:1.5px;text-transform:uppercase;">DIAGNOSTIC REPORT — ${isReflex ? 'PHASE 1' : 'PHASE 2'}</div>
+          <div style="font-weight:800;font-size:1.05rem;background:linear-gradient(90deg,#fff,#c7d2fe);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">${isReflex ? 'Motor Reflex & Latency' : 'Cognitive Focus (Stroop)'}</div>
+        </div>
+        <div style="font-size:0.6rem;padding:4px 10px;border:1px solid var(--neon-green);color:var(--neon-green);border-radius:4px;font-family:var(--font-mono);">COMPLETE ✔</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;">
+        <div style="background:rgba(0,242,254,0.04);border:1px solid rgba(0,242,254,0.14);border-radius:10px;padding:12px;text-align:center;">
+          <div style="font-size:0.58rem;font-family:var(--font-mono);color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Mean RT</div>
+          <div style="font-family:var(--font-mono);font-size:1.35rem;font-weight:700;color:var(--cyan);">${data.avg} ms</div>
+        </div>
+        <div style="background:rgba(57,255,20,0.04);border:1px solid rgba(57,255,20,0.14);border-radius:10px;padding:12px;text-align:center;">
+          <div style="font-size:0.58rem;font-family:var(--font-mono);color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Accuracy</div>
+          <div style="font-family:var(--font-mono);font-size:1.35rem;font-weight:700;color:var(--neon-green);">${data.acc}%</div>
+        </div>
+        <div style="background:rgba(255,0,127,0.04);border:1px solid rgba(255,0,127,0.14);border-radius:10px;padding:12px;text-align:center;">
+          <div style="font-size:0.58rem;font-family:var(--font-mono);color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">SD (±ms)</div>
+          <div style="font-family:var(--font-mono);font-size:1.35rem;font-weight:700;color:var(--neon-pink);">±${data.stdDev}</div>
+        </div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:18px;">
+        <div style="font-size:0.65rem;color:var(--text-muted);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">เปรียบเทียบกับกลุ่มควบคุม — Healthy Adult Age 18–35 (n=4,821)</div>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="font-size:2rem;font-weight:800;font-family:var(--font-mono);color:var(--cyan);">${data.percentile}<sup style="font-size:0.85rem;">th</sup></div>
+          <div style="font-size:0.78rem;color:var(--text);">ผลลัพธ์ของคุณดีกว่า <strong>${data.percentile}%</strong> ของกลุ่มอ้างอิง<br><span style="font-size:0.7rem;color:var(--text-muted);">ค่า Cognitive Index Score: <strong style="color:var(--cyan);">${data.score} pts</strong></span></div>
+        </div>
+        <div style="margin-top:10px;height:6px;background:rgba(255,255,255,0.05);border-radius:10px;overflow:hidden;">
+          <div style="width:${data.percentile}%;height:100%;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:10px;"></div>
+        </div>
+      </div>
+
+      <div style="background:rgba(255,200,0,0.04);border:1px solid rgba(255,200,0,0.14);border-radius:10px;padding:11px;margin-bottom:18px;font-size:0.73rem;color:rgba(255,210,80,0.85);line-height:1.5;">
+        🔒 <strong>PDF รายงาน Cognitive Health Score ฉบับสมบูรณ์</strong> จะปลดล็อกได้หลังจากทำ Phase 3 (Pupillary Light Reflex) ครบ — เนื่องจากระบบต้องการข้อมูล Corneal Reflex เพื่อประมวลผล Neurological Index ฉบับสมบูรณ์
+      </div>
+
+      <div style="display:flex;gap:10px;">
+        <button onclick="this.closest('div[style]').remove(); resetDiagnosticEngine();" style="flex:1;padding:11px;border-radius:30px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;font-size:0.82rem;">ปิด</button>
+        <button id="report-next-btn" style="flex:2;padding:11px 20px;border-radius:30px;border:none;background:linear-gradient(90deg,${isReflex ? 'var(--cyan),var(--purple)' : 'var(--neon-pink),#9d00ff'});color:${isReflex ? '#05060b' : '#fff'};font-weight:700;font-size:0.87rem;cursor:pointer;letter-spacing:1px;box-shadow:0 0 20px rgba(0,242,254,0.3);">${isReflex ? '▶ ดำเนินการ Phase 2: Stroop Test →' : '👁 เริ่ม Phase 3: PLR Calibration →'}</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(popup);
+  popup.offsetHeight; popup.style.opacity = '1';
+  document.getElementById('report-next-btn').addEventListener('click', () => {
+    popup.style.opacity = '0';
+    setTimeout(() => {
+      popup.remove();
+      switchGameMode(isReflex ? 'stroop' : 'plr');
+      document.getElementById('arena-msg').classList.remove('hidden');
+      document.getElementById('start-btn').disabled = false;
+    }, 350);
+  });
+}
+
+// =====================================================
+// STATS & GRAPH
+// =====================================================
+function updateStatisticsUI() {
+  const isStroop = currentMode === 'stroop';
+  document.getElementById('stats-score').textContent = isStroop ? stroopScore : scorePoints;
+  const log = isStroop ? stroopLatencyLog : responseLatencyLog;
+  if (log.length > 0) {
+    const avg = Math.round(log.reduce((a,b)=>a+b,0)/log.length);
+    document.getElementById('stats-rt').textContent = avg+' ms';
+  } else document.getElementById('stats-rt').textContent = '—';
+  const correct = isStroop ? stroopCorrect : successfulClicks;
+  const total   = isStroop ? stroopTotal   : successfulClicks+failedClicks;
+  if (total > 0) {
+    const acc = Math.round((correct/total)*100);
+    document.getElementById('stats-acc').textContent = acc+'%';
+    const avg = log.length > 0 ? Math.round(log.reduce((a,b)=>a+b,0)/log.length) : 999;
+    let rank='F';
+    if (acc>=90&&avg<200) rank='SS'; else if (acc>=85&&avg<235) rank='S';
+    else if (acc>=80&&avg<275) rank='A'; else if (acc>=70&&avg<325) rank='B';
+    else if (acc>=60) rank='C'; else rank='D';
+    document.getElementById('stats-rank').textContent = rank;
+  } else { document.getElementById('stats-acc').textContent='—'; document.getElementById('stats-rank').textContent='—'; }
+}
+
+function setProgressTracker(pct) {
+  document.getElementById('progress-bar').style.width = pct+'%';
+  document.getElementById('progress-pct').textContent = Math.round(pct)+'%';
+}
+
+function updateGraphData() {
+  const isStroop = currentMode === 'stroop';
+  const log = isStroop ? stroopLatencyLog : responseLatencyLog;
+  const path = document.getElementById('graph-path');
+  if (log.length === 0) { path.setAttribute('d',''); return; }
+  const maxR = isStroop ? MAX_STROOP_ROUNDS : MAX_REFLEX_ROUNDS;
+  const sx = 500/(maxR-1);
+  let d='';
+  log.forEach((lat,i) => {
+    const x = i*sx, y = 85-Math.max(0,Math.min(1,(lat-100)/500))*70;
+    d += i===0 ? `M ${x} ${y}` : ` L ${x} ${y}`;
+  });
+  path.setAttribute('d', d);
+  const avg = log.reduce((a,b)=>a+b,0)/log.length;
+  const sd  = calcStdDev(log);
+  document.getElementById('rt-deviation').textContent = `DEV: ±${sd}ms`;
+}
+
+// =====================================================
+// STYLING & PARTICLES
+// =====================================================
+function applyStylingConfig() {
+  const val = document.getElementById('setting-theme').value;
+  activeTheme = val;
+  const r = document.documentElement;
+  if (val==='cyber')   { r.style.setProperty('--cyan','#00f2fe'); r.style.setProperty('--purple','#4facfe'); r.style.setProperty('--neon-pink','#ff007f'); }
+  else if (val==='neon')    { r.style.setProperty('--cyan','#ff007f'); r.style.setProperty('--purple','#9d00ff'); r.style.setProperty('--neon-pink','#00f2fe'); }
+  else if (val==='emerald') { r.style.setProperty('--cyan','#39ff14'); r.style.setProperty('--purple','#00b4d8'); r.style.setProperty('--neon-pink','#ff5722'); }
+}
+function getThemeColor() {
+  return `hsl(${activeTheme==='neon'?330:activeTheme==='emerald'?110:200},100%,55%)`;
+}
+
+class Particle {
+  constructor(x,y,c) { this.x=x;this.y=y;this.color=c;this.size=Math.random()*3+2;this.sx=(Math.random()-0.5)*8;this.sy=(Math.random()-0.5)*8;this.alpha=1;this.decay=Math.random()*0.02+0.015; }
+  update() { this.x+=this.sx;this.y+=this.sy;this.sx*=0.98;this.sy*=0.98;this.alpha-=this.decay; }
+  draw() { ctx.save();ctx.globalAlpha=this.alpha;ctx.shadowBlur=10;ctx.shadowColor=this.color;ctx.fillStyle=this.color;ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fill();ctx.restore(); }
+}
+function spawnNeonBurst(x,y,c) { for(let i=0;i<20;i++) clickParticles.push(new Particle(x,y,c)); }
+function animateParticles() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  clickParticles=clickParticles.filter(p=>p.alpha>0);
+  clickParticles.forEach(p=>{p.update();p.draw();});
+  requestAnimationFrame(animateParticles);
+}
+
+function showFloatingScorePopup(pts, cx, cy) {
+  const el = document.createElement('div');
+  el.textContent = '+'+pts;
+  el.style.cssText = `position:fixed;left:${cx}px;top:${cy}px;color:var(--cyan);font-family:var(--font-mono);font-weight:800;font-size:0.92rem;pointer-events:none;z-index:1000;animation:float-and-fade 0.65s cubic-bezier(0.19,1,0.22,1) forwards;text-shadow:0 0 10px var(--cyan);`;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 700);
+}
+
+// =====================================================
+// DYNAMIC KEYFRAMES
+// =====================================================
+const kfStyle = document.createElement('style');
+kfStyle.textContent = `
+  @keyframes float-and-fade { 0%{opacity:1;transform:translateY(0) scale(1.1);} 100%{opacity:0;transform:translateY(-40px) scale(0.85);} }
+  @keyframes scare-zoom { 0%{transform:scale(0.04) rotate(-20deg);filter:brightness(10) saturate(3);opacity:0;} 25%{opacity:1;} 60%{transform:scale(1.18) rotate(4deg);filter:brightness(2.2);} 100%{transform:scale(1) rotate(0deg);filter:brightness(1) saturate(1.1);} }
+  #scare-vignette { position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 20%,rgba(200,0,0,0.95) 100%);animation:vignette-shudder 0.12s linear infinite;z-index:2; }
+  @keyframes vignette-shudder { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.4;transform:scale(1.02);} }
+  #scare-strobe { position:fixed;inset:0;pointer-events:none;z-index:100002;animation:strobe-run 0.08s step-end infinite;background:#fff; }
+  @keyframes strobe-run { 0%,50%{opacity:1;} 25%,75%{opacity:0;} }
+  @keyframes flash-out { from{opacity:1;} to{opacity:0;} }
+  #jumpscare-viewport.shake { animation:heavy-shake 0.8s cubic-bezier(0.36,0.07,0.19,0.97) both; }
+  @keyframes heavy-shake { 10%,90%{transform:translate3d(-8px,6px,0) rotate(-2.5deg);} 20%,80%{transform:translate3d(10px,-8px,0) rotate(3deg);} 30%,50%,70%{transform:translate3d(-12px,10px,0) rotate(-4deg) scale(1.06);} 40%,60%{transform:translate3d(14px,-12px,0) rotate(4.5deg) scale(0.96);} }
+  .restart-msg { position:absolute;bottom:28px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.45);font-size:0.72rem;font-family:var(--font-mono);letter-spacing:2px;text-transform:uppercase;white-space:nowrap; }
+`;
+document.head.appendChild(kfStyle);
 </script>
 </body>
 </html>
